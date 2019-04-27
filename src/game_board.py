@@ -34,7 +34,7 @@ class Cell:
 
     def draw_cell(self, screen, cellType):
 
-        coord = self._coord[0] * 40, self._coord[1] * 40
+        coord = self._coord['x'] * 40, self._coord['y'] * 40
         if cellType == 1:
             screen.blit(self.__image, coord)
         else:
@@ -52,7 +52,9 @@ class Tower(Cell):
         self.drawMode = 2
 
     def calc_power(self):
-        x, y = self.get_coord()
+        coord = self.get_coord()
+        x = coord['x']
+        y = coord['y']
 
         # top
         if GameBoard.BOARD_CELLS[x][y - self.range] == 1:
@@ -125,29 +127,48 @@ class GameBoard:
     ]
 
     def __init__(self):
-        self.cells = []
-        self.start = (0, 0)             # start -> tuple
-        self.end = (0, 0)                 # end -> tuple
+        self.__cells = []
+        self.__start = {'x': 0, 'y': 0}
+        self.__end = {'x': 0, 'y': 0}
+        self.__parse_board()
+
+    def get_start(self):
+        return self.__start
+
+    def get_end(self):
+        return self.__end
 
     def __parse_board(self):
         i = 0
         for row in self.BOARD_CELLS:
             j = 0
             for cell in row:
+                if cell == -5000:
+                    self.__start['x'] = i
+                    self.__start['y'] = j
+                elif cell == 5000:
+                    self.__end['x'] = i
+                    self.__end['y'] = j
+
                 if cell == 2:
-                    tw = Tower(cell, (i, j))
+                    tw = Tower(cell, {'x': i, 'y': j})
                     twPow = tw.calc_power()
                     tw.set_texture(twPow)
-                    self.cells.append(tw)
+                    self.__cells.append(tw)
                 else:
-                    cl = Cell(cell, (i, j))
+                    cl = Cell(cell, {'x': i, 'y': j})
                     cl.set_texture()
-                    self.cells.append(cl)
+                    self.__cells.append(cl)
                 j += 1
             i += 1
 
     def draw_board(self, screen):
-        self.__parse_board()
-        for cell in self.cells:
+        for cell in self.__cells:
             cell.draw_cell(screen, cell.drawMode)
+
+
+
+
+
+
 
