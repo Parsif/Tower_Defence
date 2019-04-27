@@ -152,8 +152,8 @@ class GameBoard:
 
                 if cell == 2:
                     tw = Tower(cell, {'x': i, 'y': j})
-                    twPow = tw.calc_power()
-                    tw.set_texture(twPow)
+                    tw_pow = tw.calc_power()
+                    tw.set_texture(tw_pow)
                     self.__cells.append(tw)
                 else:
                     cl = Cell(cell, {'x': i, 'y': j})

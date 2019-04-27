@@ -12,7 +12,8 @@ class GameObject:
         self.__screen = pygame.display.set_mode((800, 800))
         self.__GB = GameBoard()
         print(self.__GB.get_start()['x'])
-        self.mobs = [mob_module.Skeleton(self.__GB.get_start())]
+        # self.mobs = [mob_module.Spider(self.__GB.get_start())]
+        self.mobs = [mob_module.Spider({'x': 3, 'y': 3})]
 
     @staticmethod
     def set_up_game():
@@ -28,24 +29,21 @@ class GameObject:
 
     def draw_mobs(self):
         for mob in self.mobs:
-            mob.draw_mob(self.__screen)
+            mob.draw(self.__screen)
 
 
 def main():
     pygame.init()
     GameObject.set_up_game()
     gm_obj = GameObject()
-
-    start_ticks = pygame.time.get_ticks()  # starter tick
+    all_obj = pygame.sprite.Group()
+    clock = pygame.time.Clock()
     is_running = True
     while is_running:
+        clock.tick(30)
         gm_obj.init_board()
         gm_obj.draw_mobs()
-
-        seconds = (pygame.time.get_ticks() - start_ticks) / 1000  # calculate how many seconds
-        if seconds > 2:  # if more than 10 seconds close the game
-            gm_obj.mobs[0].move()
-            start_ticks = pygame.time.get_ticks()
+        gm_obj.mobs[0].update()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -53,7 +51,7 @@ def main():
                 break
 
             if event.type == pygame.KEYDOWN:
-                gm_obj.mobs[0].move()
+                gm_obj.mobs[0].update()
 
             pygame.display.update()
 
