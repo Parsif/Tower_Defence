@@ -1,4 +1,6 @@
 import pygame
+from collections import deque
+import board_matrix
 
 
 class Cell:
@@ -103,28 +105,7 @@ class GameBoard:
     """
        Docstring
     """
-    BOARD_CELLS = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 0
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -5000, 0],  # 1
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 2
-        [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],  # 3
-        [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # 4
-        [0, 1, 0, 1, 0, 2, 2, 2, 2, 0, 1, 0, 2, 2, 2, 2, 2, 0, 1, 0],  # 5
-        [0, 1, 0, 1, 0, 2, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # 6
-        [0, 1, 0, 1, 0, 2, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0],  # 7
-        [0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0],  # 8
-        [0, 1, 0, 1, 1, 1, 1, 1, 5000, 0, 2, 2, 2, 2, 2, 0, 0, 1, 1, 0],  # 9
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 1, 0],  # 10
-        [0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # 11
-        [0, 1, 0, 2, 2, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],  # 12
-        [0, 1, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # 13
-        [0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 0],  # 14
-        [0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 0],  # 15
-        [0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1, 0],  # 16
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],  # 17
-        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],  # 18
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],  # 19
-    ]
+    BOARD_CELLS = board_matrix.BOARD_CELLS
 
     def __init__(self):
         self.__cells = []
@@ -166,9 +147,96 @@ class GameBoard:
         for cell in self.__cells:
             cell.draw_cell(screen, cell.drawMode)
 
+    def __mark_path(self):
+        board = self.BOARD_CELLS
+        queue = deque()
+        queue.append(self.__start)
+        d = 4
+        while len(queue) > 0:
+            tmp = queue.popleft()
+            res = self.__is_moving_top(tmp)
+            if res[0]:
+                queue.append(res[1])
+            res = self.__is_moving_right(tmp)
+            if res[0]:
+                queue.append(res[1])
+            res = self.__is_moving_bottom(tmp)
+            if res[0]:
+                queue.append(res[1])
+            res = self.__is_moving_left(tmp)
+            if res[0]:
+                queue.append(res[1])
 
+            board[tmp['x']][tmp['y']] = d
+            d += 1
 
+        return board
 
+    def get_path(self):
+        board = self.__mark_path()
+        path = [self.__end]
+        neighbours = self.__find_neighbours(self.__end, board)
+        neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
+        cur = neighbours[0]
 
+        while cur['x'] != self.__start['x'] or cur['y'] != self.__start['y']:
+            path.append(cur)
+            neighbours = self.__find_neighbours(cur, board)
+            neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
+            cur = neighbours[0]
 
+        path.append(self.__start)
+        path.reverse()
+        return path
 
+    def __is_moving_top(self, coord: dict) -> tuple:
+        if self.BOARD_CELLS[coord['x']][coord['y'] - 1] == 1:
+            return (True, {
+                'x': coord['x'],
+                'y': coord['y'] - 1
+            })
+
+        return False, None
+
+    def __is_moving_right(self, coord: dict) -> tuple:
+        if self.BOARD_CELLS[coord['x'] + 1][coord['y']] == 1:
+            return (True, {
+                'x': coord['x'] + 1,
+                'y': coord['y']
+            })
+
+        return False, None
+
+    def __is_moving_bottom(self, coord: dict) -> tuple:
+        if self.BOARD_CELLS[coord['x']][coord['y'] + 1] == 1:
+            return (True, {
+                'x': coord['x'],
+                'y': coord['y'] + 1
+            })
+
+        return False, None
+
+    def __is_moving_left(self, coord: dict) -> tuple:
+        if self.BOARD_CELLS[coord['x'] - 1][coord['y']] == 1:
+            return (True, {
+                'x': coord['x'] - 1,
+                'y': coord['y']
+            })
+
+        return False, None
+
+    @staticmethod
+    def __find_neighbours(coord: dict, board: list) -> list:
+        x, y = coord['x'], coord['y']
+        neighbours = []
+
+        if y + 1 < len(board) and board[x][y + 1] > 2:
+            neighbours.append({'x': x, 'y': y + 1})
+        if y - 1 > 0 and board[x][y - 1] > 2:
+            neighbours.append({'x': x, 'y': y - 1})
+        if x + 1 < len(board) and board[x + 1][y] > 2:
+            neighbours.append({'x': x + 1, 'y': y})
+        if x - 1 > 0 and board[x - 1][y] > 2:
+            neighbours.append({'x': x - 1, 'y': y})
+
+        return neighbours
