@@ -9,12 +9,13 @@ class GameObject:
         Docstring
     """
     def __init__(self):
-        self.__screen = pygame.display.set_mode((800, 800))
+        self.__screen = pygame.display.set_mode((1000, 800))
+        self.__bgMusic = pygame.mixer.music.load(r'sound/background_music/main_music.wav')
         self.__GB = GameBoard()
         print(self.__GB.get_start()['x'])
         self.__path = self.__GB.get_path()
         self.__start = self.__GB.get_start()
-        self.mobs = [mob_module.Spider(self.__start, self.__path)]
+        self.mobs = []
 
     @staticmethod
     def set_up_game():
@@ -39,6 +40,13 @@ class GameObject:
     def spawn_mob(self):
         self.mobs.append(mob_module.Spider(self.__start, self.__path))
 
+    @staticmethod
+    def play_music():
+        pygame.mixer.music.play(-1)
+
+# def show_menu():
+
+
 
 def main():
     pygame.init()
@@ -48,6 +56,8 @@ def main():
     clock = pygame.time.Clock()
     is_running = True
     i = 0
+    gm_obj.play_music()
+    gm_obj.spawn_mob()
     while is_running:
         clock.tick(10)
         gm_obj.init_board()
@@ -72,4 +82,5 @@ def main():
 
 
 if __name__ == '__main__':
+
     main()

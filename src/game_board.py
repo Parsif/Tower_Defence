@@ -170,6 +170,11 @@ class GameBoard:
             board[tmp['x']][tmp['y']] = d
             d += 1
 
+        for row in board:
+            for i in row:
+                print(f'{i:>4}', end='')
+            print(';')
+
         return board
 
     def get_path(self):
@@ -231,11 +236,11 @@ class GameBoard:
 
         if y + 1 < len(board) and board[x][y + 1] > 2:
             neighbours.append({'x': x, 'y': y + 1})
-        if y - 1 > 0 and board[x][y - 1] > 2:
+        if y - 1 >= 0 and board[x][y - 1] > 2:
             neighbours.append({'x': x, 'y': y - 1})
         if x + 1 < len(board) and board[x + 1][y] > 2:
             neighbours.append({'x': x + 1, 'y': y})
-        if x - 1 > 0 and board[x - 1][y] > 2:
+        if x - 1 >= 0 and board[x - 1][y] > 2:
             neighbours.append({'x': x - 1, 'y': y})
 
         return neighbours
