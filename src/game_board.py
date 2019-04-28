@@ -172,10 +172,6 @@ class GameBoard:
             board[tmp['x']][tmp['y']] = d
             d += 1
 
-        for row in board:
-            for i in row:
-                print(f'{i:>4}', end='')
-            print(';')
 
         return board
 

@@ -37,8 +37,13 @@ class GameObject:
             mob.draw(self.__screen)
 
     def update_mobs(self):
+        i = 0
         for mob in self.mobs:
-            mob.update()
+            if mob.is_end_reached:
+                self.mobs.pop(i)
+            else:
+                i += 1
+                mob.update()
 
     def spawn_mob(self):
         index = randint(0, 2)
@@ -61,7 +66,7 @@ def main():
     gm_obj.play_music()
     gm_obj.spawn_mob()
     while is_running:
-        clock.tick(10)
+        clock.tick(5)
         gm_obj.init_board()
         gm_obj.draw_mobs()
         gm_obj.update_mobs()

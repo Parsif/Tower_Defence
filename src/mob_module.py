@@ -12,6 +12,7 @@ class Mob(pygame.sprite.Sprite):
         self._path = path
         self.image = None
         self.__coord = {'x': 0, 'y': 0}
+        self.is_end_reached = False
 
         self.__imageCnt = 0
         self.__path_cnt = 0
@@ -21,7 +22,11 @@ class Mob(pygame.sprite.Sprite):
 
     def __take_a_step(self):
         self.__anim_cnt += 1
-        if len(self._path) == self.__path_cnt or self.__anim_cnt % 4 == 0:
+        if self.__anim_cnt % 4 == 0:
+            self.__path_cnt += 1
+            return None
+        if len(self._path) == self.__path_cnt:
+            self.is_end_reached = True
             self.__path_cnt += 1
             return None
 
