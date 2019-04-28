@@ -1,7 +1,9 @@
 import pygame
-from pygame.locals import *
+from random import randint
 from game_board import GameBoard
 import mob_module
+
+# from pygame.locals import *
 
 
 class GameObject:
@@ -12,9 +14,10 @@ class GameObject:
         self.__screen = pygame.display.set_mode((1000, 800))
         self.__bgMusic = pygame.mixer.music.load(r'sound/background_music/main_music.wav')
         self.__GB = GameBoard()
-        print(self.__GB.get_start()['x'])
-        self.__path = self.__GB.get_path()
         self.__start = self.__GB.get_start()
+        self.__path = []
+        for st in self.__start:
+            self.__path.append(self.__GB.get_path(st))
         self.mobs = []
 
     @staticmethod
@@ -38,15 +41,14 @@ class GameObject:
             mob.update()
 
     def spawn_mob(self):
-        self.mobs.append(mob_module.Spider(self.__start, self.__path))
+        index = randint(0, 2)
+        self.mobs.append(mob_module.Spider(self.__start[index], self.__path[index]))
 
     @staticmethod
     def play_music():
         pygame.mixer.music.play(-1)
 
 # def show_menu():
-
-
 
 def main():
     pygame.init()

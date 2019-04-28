@@ -1,5 +1,6 @@
 import pygame
 from collections import deque
+from copy import deepcopy
 import board_matrix
 
 
@@ -109,7 +110,7 @@ class GameBoard:
 
     def __init__(self):
         self.__cells = []
-        self.__start = {'x': 0, 'y': 0}
+        self.__start = []
         self.__end = {'x': 0, 'y': 0}
         self.__parse_board()
 
@@ -125,8 +126,9 @@ class GameBoard:
             j = 0
             for cell in row:
                 if cell == -5000:
-                    self.__start['x'] = i
-                    self.__start['y'] = j
+                    # self.__start['x'] = i
+                    # self.__start['y'] = j
+                    self.__start.append({'x': i, 'y': j})
                 elif cell == 5000:
                     self.__end['x'] = i
                     self.__end['y'] = j
@@ -147,23 +149,23 @@ class GameBoard:
         for cell in self.__cells:
             cell.draw_cell(screen, cell.drawMode)
 
-    def __mark_path(self):
-        board = self.BOARD_CELLS
+    def __mark_path(self, start):
+        board = deepcopy(self.BOARD_CELLS)
         queue = deque()
-        queue.append(self.__start)
+        queue.append(start)
         d = 4
         while len(queue) > 0:
             tmp = queue.popleft()
-            res = self.__is_moving_top(tmp)
+            res = self.__is_moving_top(tmp, board)
             if res[0]:
                 queue.append(res[1])
-            res = self.__is_moving_right(tmp)
+            res = self.__is_moving_right(tmp, board)
             if res[0]:
                 queue.append(res[1])
-            res = self.__is_moving_bottom(tmp)
+            res = self.__is_moving_bottom(tmp, board)
             if res[0]:
                 queue.append(res[1])
-            res = self.__is_moving_left(tmp)
+            res = self.__is_moving_left(tmp, board)
             if res[0]:
                 queue.append(res[1])
 
@@ -177,14 +179,14 @@ class GameBoard:
 
         return board
 
-    def get_path(self):
-        board = self.__mark_path()
+    def get_path(self, start):
+        board = self.__mark_path(start)
         path = [self.__end]
         neighbours = self.__find_neighbours(self.__end, board)
         neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
         cur = neighbours[0]
 
-        while cur['x'] != self.__start['x'] or cur['y'] != self.__start['y']:
+        while cur['x'] != start['x'] or cur['y'] != start['y']:
             path.append(cur)
             neighbours = self.__find_neighbours(cur, board)
             neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
@@ -193,8 +195,8 @@ class GameBoard:
         path.reverse()
         return path
 
-    def __is_moving_top(self, coord: dict) -> tuple:
-        if self.BOARD_CELLS[coord['x']][coord['y'] - 1] == 1:
+    def __is_moving_top(self, coord: dict, board) -> tuple:
+        if board[coord['x']][coord['y'] - 1] == 1:
             return (True, {
                 'x': coord['x'],
                 'y': coord['y'] - 1
@@ -202,8 +204,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_right(self, coord: dict) -> tuple:
-        if self.BOARD_CELLS[coord['x'] + 1][coord['y']] == 1:
+    def __is_moving_right(self, coord: dict, board) -> tuple:
+        if board[coord['x'] + 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] + 1,
                 'y': coord['y']
@@ -211,8 +213,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_bottom(self, coord: dict) -> tuple:
-        if self.BOARD_CELLS[coord['x']][coord['y'] + 1] == 1:
+    def __is_moving_bottom(self, coord: dict, board) -> tuple:
+        if board[coord['x']][coord['y'] + 1] == 1:
             return (True, {
                 'x': coord['x'],
                 'y': coord['y'] + 1
@@ -220,8 +222,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_left(self, coord: dict) -> tuple:
-        if self.BOARD_CELLS[coord['x'] - 1][coord['y']] == 1:
+    def __is_moving_left(self, coord: dict, board) -> tuple:
+        if board[coord['x'] - 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] - 1,
                 'y': coord['y']
@@ -233,6 +235,9 @@ class GameBoard:
     def __find_neighbours(coord: dict, board: list) -> list:
         x, y = coord['x'], coord['y']
         neighbours = []
+
+        if board[x][y] == 5:
+            print()
 
         if y + 1 < len(board) and board[x][y + 1] > 2:
             neighbours.append({'x': x, 'y': y + 1})
