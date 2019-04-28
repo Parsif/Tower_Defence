@@ -185,7 +185,6 @@ class GameBoard:
             neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
             cur = neighbours[0]
 
-        path.append(self.__start)
         path.reverse()
         return path
 

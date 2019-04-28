@@ -49,14 +49,13 @@ def main():
     is_running = True
     i = 0
     while is_running:
-        clock.tick(3)
+        clock.tick(10)
         gm_obj.init_board()
         gm_obj.draw_mobs()
         gm_obj.update_mobs()
-        if i == 5:
+        if i == 10:
             gm_obj.spawn_mob()
             i = 0
-
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
