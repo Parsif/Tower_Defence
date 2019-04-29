@@ -10,11 +10,11 @@ class Cell:
     """
 
     def __init__(self, cell_type, coord):
-        self.__cellType = cell_type   # cell_type -> integer
-        self._coord = coord          # coord -> tuple
+        self.__cellType = cell_type
+        self._coord = coord
         self.__image = None
-        self.__color = (0, 0, 0)
-        self.drawMode = 1
+        self._color = (0, 0, 0)
+        self.drawMode = 1  # 1 -> draw image, 2 -> draw circle
 
         if self.__cellType == 0:
             self.__image = pygame.image.load(r'images/wasteland.jpg').convert()
@@ -23,7 +23,7 @@ class Cell:
             self.__image = pygame.image.load(r'images/road.jpg').convert()
 
         elif self.__cellType == 2:
-            self.__color = (255, 100, 100)
+            self._color = (255, 100, 100)
 
         elif self.__cellType == 5000:
             self.__image = pygame.image.load(r'images/castle.jpg').convert()
@@ -34,13 +34,9 @@ class Cell:
         else:
             raise Exception('Unknown type of cell')
 
-    def draw_cell(self, screen, cellType):
-
+    def draw_cell(self, screen):
         coord = self._coord['x'] * 40, self._coord['y'] * 40
-        if cellType == 1:
-            screen.blit(self.__image, coord)
-        else:
-            pygame.draw.rect(screen, self.__color, [coord[0], coord[1], 40, 40])
+        screen.blit(self.__image, coord)
 
     def get_coord(self):
         return self._coord
@@ -64,6 +60,10 @@ class Tower(Cell):
         self.__power = 0
         self.range = 2
         self.drawMode = 2
+
+    def draw_cell(self, screen):
+        coord = self._coord['x'] * 40, self._coord['y'] * 40
+        pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
 
 
 class GameBoard:
@@ -112,7 +112,7 @@ class GameBoard:
 
     def draw_board(self, screen):
         for cell in self.__cells:
-            cell.draw_cell(screen, cell.drawMode)
+            cell.draw_cell(screen)
 
     def __mark_path(self, start):
         board = deepcopy(self.BOARD_CELLS)
