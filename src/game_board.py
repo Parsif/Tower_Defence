@@ -47,6 +47,18 @@ class Cell:
         return self._coord
 
 
+class Castle(Cell):
+    def __init__(self, cell_type, coord):
+        Cell.__init__(self, cell_type, coord)
+        self.__HP = 100
+
+    def get_hp(self):
+        return self.__HP
+
+    def take_damage(self, damage):
+        self.__HP -= damage
+
+
 class Tower(Cell):
     def __init__(self, cell_type, coord):
         Cell.__init__(self, cell_type, coord)
@@ -112,6 +124,7 @@ class GameBoard:
         self.__cells = []
         self.__start = []
         self.__end = {'x': 0, 'y': 0}
+        self.__Castle = None
         self.__parse_board()
 
     def get_start(self):
@@ -120,25 +133,29 @@ class GameBoard:
     def get_end(self):
         return self.__end
 
+    def get_castle(self):
+        return self.__Castle
+
     def __parse_board(self):
         i = 0
         for row in self.BOARD_CELLS:
             j = 0
             for cell in row:
-                if cell == -5000:
-                    # self.__start['x'] = i
-                    # self.__start['y'] = j
-                    self.__start.append({'x': i, 'y': j})
-                elif cell == 5000:
+                if cell == 5000:
+                    self.__Castle = Castle(cell, {'x': i, 'y': j})
+                    self.__Castle.set_texture()
+                    self.__cells.append(self.__Castle)
                     self.__end['x'] = i
                     self.__end['y'] = j
 
-                if cell == 2:
+                elif cell == 2:
                     tw = Tower(cell, {'x': i, 'y': j})
                     tw_pow = tw.calc_power()
                     tw.set_texture(tw_pow)
                     self.__cells.append(tw)
                 else:
+                    if cell == -5000:
+                        self.__start.append({'x': i, 'y': j})
                     cl = Cell(cell, {'x': i, 'y': j})
                     cl.set_texture()
                     self.__cells.append(cl)
@@ -191,7 +208,8 @@ class GameBoard:
         path.reverse()
         return path
 
-    def __is_moving_top(self, coord: dict, board) -> tuple:
+    @staticmethod
+    def __is_moving_top(coord: dict, board) -> tuple:
         if coord['y'] - 1 >= 0 and board[coord['x']][coord['y'] - 1] == 1:
             return (True, {
                 'x': coord['x'],
@@ -200,7 +218,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_right(self, coord: dict, board) -> tuple:
+    @staticmethod
+    def __is_moving_right(coord: dict, board) -> tuple:
         if coord['x'] + 1 < len(board) and board[coord['x'] + 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] + 1,
@@ -209,7 +228,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_bottom(self, coord: dict, board) -> tuple:
+    @staticmethod
+    def __is_moving_bottom(coord: dict, board) -> tuple:
         if coord['y'] + 1 < len(board) and board[coord['x']][coord['y'] + 1] == 1:
             return (True, {
                 'x': coord['x'],
@@ -218,7 +238,8 @@ class GameBoard:
 
         return False, None
 
-    def __is_moving_left(self, coord: dict, board) -> tuple:
+    @staticmethod
+    def __is_moving_left(coord: dict, board) -> tuple:
         if coord['x'] - 1 >= 0 and board[coord['x'] - 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] - 1,

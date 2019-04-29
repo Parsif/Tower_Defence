@@ -1,6 +1,6 @@
 import pygame
 from random import randint
-from game_board import GameBoard
+from game_board import GameBoard, Castle
 from game_dsp import desc
 import mob_module
 
@@ -16,10 +16,10 @@ class Button:
         self.__y = y
         self.__text = text
 
-    def draw(self, screen, outLine=None):
+    def draw(self, screen, font_size, outLine=None):
         pygame.draw.rect(screen, self.__color, (self.__x, self.__y, self.__width, self.__height))
         if self.__text != '':
-            font = pygame.font.SysFont('impact', 40)
+            font = pygame.font.SysFont('impact', font_size)
             text = font.render(self.__text, 1, (0, 0, 0))
             screen.blit(text, (self.__x + (self.__width / 2 - text.get_width() / 2),
                                            self.__y + (self.__height / 2 - text.get_height() / 2)))
@@ -63,7 +63,7 @@ class MenuObject:
         while is_running:
             self.__screen.blit(self.__bgImage, (0, 0))
             self.__show_text()
-            self.__exitBtn.draw(self.__screen)
+            self.__exitBtn.draw(self.__screen, 40)
             for event in pygame.event.get():
                 m_pos = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -77,7 +77,6 @@ class MenuObject:
                     else:
                         self.__exitBtn.set_color((150, 100, 0))
 
-
             pygame.display.update()
 
 
@@ -86,9 +85,11 @@ class GameObject:
         Docstring
     """
     def __init__(self):
+        self.__txtFont = pygame.font.SysFont('impact', 20)
         self.__screen = pygame.display.set_mode((1000, 800))
         self.__bgMusic = pygame.mixer.music.load(r'sound/background_music/main_music.wav')
         self.__GB = GameBoard()
+        self.__Castle = self.__GB.get_castle()
         self.__start = self.__GB.get_start()
         self.__path = []
         for st in self.__start:
@@ -119,6 +120,7 @@ class GameObject:
         for mob in self.mobs:
             if mob.is_end_reached:
                 self.mobs.pop(i)
+                self.__Castle.take_damage(1)
             else:
                 i += 1
                 mob.update()
@@ -130,6 +132,11 @@ class GameObject:
     @staticmethod
     def play_music():
         pygame.mixer.music.play(-1)
+
+    def show_cst_hp(self):
+        hp = self.__Castle.get_hp()
+        hpBtn = Button((0, 150, 0), 125, 50, 865, 10, f'Castle HP: {hp}')
+        hpBtn.draw(self.__screen, 20)
 
 
 def main():
@@ -150,6 +157,7 @@ def main():
         GmObj.init_board()
         GmObj.draw_mobs()
         GmObj.update_mobs()
+        GmObj.show_cst_hp()
         if i == 10:
             GmObj.spawn_mob()
             i = 0
