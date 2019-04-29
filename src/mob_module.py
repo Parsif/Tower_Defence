@@ -1,5 +1,5 @@
 import pygame
-import spider_imgs
+from helper_modules import spider_imgs
 
 
 class Mob(pygame.sprite.Sprite):

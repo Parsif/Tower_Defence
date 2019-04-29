@@ -1,69 +1,8 @@
-import pygame
 from collections import deque
 from copy import deepcopy
-import board_matrix
+from helper_modules import board_matrix
+from src.cell import Cell, Tower, Castle
 
-
-class Cell:
-    """
-        Docstring
-    """
-
-    def __init__(self, cell_type, coord):
-        self.__cellType = cell_type
-        self._coord = coord
-        self.__image = None
-        self._color = (0, 0, 0)
-        self.drawMode = 1  # 1 -> draw image, 2 -> draw circle
-
-        if self.__cellType == 0:
-            self.__image = pygame.image.load(r'images/wasteland.jpg').convert()
-
-        elif self.__cellType == 1:
-            self.__image = pygame.image.load(r'images/road.jpg').convert()
-
-        elif self.__cellType == 2:
-            self._color = (255, 100, 100)
-
-        elif self.__cellType == 5000:
-            self.__image = pygame.image.load(r'images/castle.jpg').convert()
-
-        elif self.__cellType == -5000:
-            self.__image = pygame.image.load(r'images/portal.jpg').convert()
-
-        else:
-            raise Exception('Unknown type of cell')
-
-    def draw_cell(self, screen):
-        coord = self._coord['x'] * 40, self._coord['y'] * 40
-        screen.blit(self.__image, coord)
-
-    def get_coord(self):
-        return self._coord
-
-
-class Castle(Cell):
-    def __init__(self, cell_type, coord):
-        Cell.__init__(self, cell_type, coord)
-        self.__HP = 100
-
-    def get_hp(self):
-        return self.__HP
-
-    def take_damage(self, damage):
-        self.__HP -= damage
-
-
-class Tower(Cell):
-    def __init__(self, cell_type, coord):
-        Cell.__init__(self, cell_type, coord)
-        self.__power = 0
-        self.range = 2
-        self.drawMode = 2
-
-    def draw_cell(self, screen):
-        coord = self._coord['x'] * 40, self._coord['y'] * 40
-        pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
 
 
 class GameBoard:
@@ -77,16 +16,24 @@ class GameBoard:
         self.__start = []
         self.__end = {'x': 0, 'y': 0}
         self.__Castle = None
+        self.__towers = []
         self.__parse_board()
 
+    @property
     def get_start(self):
         return self.__start
 
+    @property
     def get_end(self):
         return self.__end
 
+    @property
     def get_castle(self):
         return self.__Castle
+
+    @property
+    def get_towers(self):
+        return self.__towers
 
     def __parse_board(self):
         i = 0
@@ -101,7 +48,7 @@ class GameBoard:
 
                 elif cell == 2:
                     tw = Tower(cell, {'x': i, 'y': j})
-                    self.__cells.append(tw)
+                    self.__towers.append(tw)
                 else:
                     if cell == -5000:
                         self.__start.append({'x': i, 'y': j})
@@ -110,9 +57,11 @@ class GameBoard:
                 j += 1
             i += 1
 
-    def draw_board(self, screen):
+    def draw_board(self, screen, towers):
         for cell in self.__cells:
-            cell.draw_cell(screen)
+            cell.draw(screen)
+        for tower in towers:
+            tower.draw(screen)
 
     def __mark_path(self, start):
         board = deepcopy(self.BOARD_CELLS)
@@ -199,9 +148,6 @@ class GameBoard:
     def __find_neighbours(coord: dict, board: list) -> list:
         x, y = coord['x'], coord['y']
         neighbours = []
-
-        if board[x][y] == 5:
-            print()
 
         if y + 1 < len(board) and board[x][y + 1] > 2:
             neighbours.append({'x': x, 'y': y + 1})
