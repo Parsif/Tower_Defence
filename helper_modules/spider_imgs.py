@@ -46,3 +46,5 @@ spider_left.append(pygame.image.load(r'images/spider/spider_left5.png'))
 spider_left.append(pygame.image.load(r'images/spider/spider_left6.png'))
 spider_left.append(pygame.image.load(r'images/spider/spider_left7.png'))
 spider_left.append(pygame.image.load(r'images/spider/spider_left8.png'))
+
+spider_dead = [pygame.image.load(r'images/spider/spider_dead.png')]

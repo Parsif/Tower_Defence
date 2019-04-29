@@ -20,6 +20,17 @@ class Mob(pygame.sprite.Sprite):
         self.__anim_cnt = 4
         self.__imageSource = spider_imgs.spider_up
 
+        self.__hp = 200
+        self._turns_dead = 0
+
+    @property
+    def get_hp(self):
+        return self.__hp
+
+    @property
+    def get_turns_dead(self):
+        return self._turns_dead
+
     def __take_a_step(self):
         self.__anim_cnt += 1
         if self.__anim_cnt % 4 == 0:
@@ -77,12 +88,16 @@ class Mob(pygame.sprite.Sprite):
         self.__upgrade_anim()
 
         self.__imageCnt += 1
-        if self.__imageCnt == 8:
+        if self.__imageCnt == len(self.__imageSource):
             self.__imageCnt = 0
         self.image = self.__imageSource[self.__imageCnt]
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+    def take_damage(self, damage):
+        self.__hp -= damage
+
 
 
 class Spider(Mob):
@@ -91,7 +106,9 @@ class Spider(Mob):
         self.image = spider_imgs.spider_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
 
-
-
+    def draw_dead(self, screen):
+        self.image = spider_imgs.spider_down[0]
+        screen.blit(self.image, self.rect)
+        self._turns_dead += 1
 
 

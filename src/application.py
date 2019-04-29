@@ -1,10 +1,7 @@
 import pygame
 from src.gm_obj import GameObject
-from src.contorllers import MenuObject
-
+from src.controllers import MenuObject
 # from pygame.locals import *
-
-
 
 
 def main():
@@ -22,13 +19,16 @@ def main():
     i = 0
     if Menu.get_sound_mod:
         GmObj.play_music()
+
     GmObj.spawn_mob()
     while is_running:
         clock.tick(10)
         GmObj.init_board()
         GmObj.draw_mobs()
-        GmObj.update_mobs()
+        GmObj.draw_dead_mb()
         GmObj.show_cst_hp()
+        GmObj.tw_fire()
+
         if i == 10:
             GmObj.spawn_mob()
             i = 0
@@ -47,6 +47,7 @@ def main():
                 GmObj.towers_hover(m_pos)
 
         pygame.display.update()
+        GmObj.update_mobs()
         i += 1
 
     pygame.quit()
