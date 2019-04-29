@@ -1,4 +1,5 @@
 import pygame
+from helper_modules import tower_img
 
 
 class Particle:
@@ -29,7 +30,7 @@ class Cell:
         self._cellType = cell_type
         self._coord = coord
         self.__image = None
-        self._SIZE = 40
+        self.SIZE = 40
 
         if self._cellType == 0:
             self.__image = pygame.image.load(r'images/wasteland.jpg').convert()
@@ -50,7 +51,7 @@ class Cell:
             raise Exception('Unknown type of cell')
 
     def draw(self, screen):
-        coord = self._coord['x'] * self._SIZE, self._coord['y'] * self._SIZE
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
     def get_coord(self):
@@ -76,19 +77,21 @@ class Tower(Cell):
         self.__power = 0
         self.range = 2
         self._color = (255, 100, 100)
-        self._image = None
+        self._Particle = Particle(self._coord['x'] * self.SIZE + self.SIZE // 2,
+                                  self._coord['y'] * self.SIZE + self.SIZE // 3)
+
 
     def draw(self, screen):
-        coord = self._coord['x'] * self._SIZE, self._coord['y'] * self._SIZE
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
 
     def set_color(self, color=(255, 100, 100)):
         self._color = color
 
     def is_hovered(self, m_pos):
-        coord = self._coord['x'] * self._SIZE, self._coord['y'] * self._SIZE
-        if coord[0] < m_pos[0] < coord[0] + self._SIZE:
-            if coord[1] < m_pos[1] < coord[1] + self._SIZE:
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        if coord[0] < m_pos[0] < coord[0] + self.SIZE:
+            if coord[1] < m_pos[1] < coord[1] + self.SIZE:
                 return True
 
         return False
@@ -96,8 +99,8 @@ class Tower(Cell):
     def _find_mob(self, mobs):
         mobs_in_range = []
         for mob in mobs:
-            rngX = abs(mob.rect.x - self._coord['x'] * self._SIZE)
-            rngY = abs(mob.rect.y - self._coord['y'] * self._SIZE)
+            rngX = abs(mob.rect.x - self._coord['x'] * self.SIZE)
+            rngY = abs(mob.rect.y - self._coord['y'] * self.SIZE)
             if rngX <= 80 and rngY <= 80:
                 mobs_in_range.append({'mob': mob, 'range': rngX + rngY})
 
@@ -113,18 +116,17 @@ class BasicTower(Tower):
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
-        self.__image = pygame.image.load(r'images/tower/basicTower1.png')
+        self.__image = tower_img.basicTw1
         self.__damage = 20
         self.__cost = 100
         self.__fireCnt = self.SPEED
-        self.__Particle = Particle(self._coord['x'] * self._SIZE + self._SIZE // 2,
-                                   self._coord['y'] * self._SIZE + self._SIZE // 2)
+
 
     def draw(self, screen):
-        coord = self._coord['x'] * self._SIZE, self._coord['y'] * self._SIZE
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
-    def fire(self, screen, mobs):
+    def fire(self, screen, mobs, sound_mode):
         self.__fireCnt += 1
 
         if self.__fireCnt % self.SPEED != 0:
@@ -134,8 +136,61 @@ class BasicTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage)
-        self.__Particle.draw(screen)
+        near_mob.take_damage(self.__damage, sound_mode)
+        self._Particle.draw(screen)
 
 
+class FireTower(Tower):
+    SPEED = 10  # less is faster
 
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.fireTw1
+        self.__damage = 20
+        self.__cost = 100
+        self.__fireCnt = self.SPEED
+
+    def draw(self, screen):
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs, sound_mode):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        near_mob.take_damage(self.__damage, sound_mode)
+        self._Particle.draw(screen)
+
+
+class IceTower(Tower):
+    SPEED = 10  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.iceTw1
+        self.__damage = 20
+        self.__cost = 100
+        self.__fireCnt = self.SPEED
+
+    def draw(self, screen):
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs, sound_mode):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        near_mob.take_damage(self.__damage, sound_mode)
+        self._Particle.draw(screen)

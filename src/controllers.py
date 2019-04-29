@@ -1,11 +1,14 @@
 import pygame
 import helper_modules.game_dsp as GD
+import helper_modules.sound as Sound
+
 
 class Button:
     """
         Docstring
     """
     def __init__(self, width, height, x, y, color=(100, 100, 0)):
+        self.__colorOrig = color
         self.__color = color
         self.__width = width
         self.__height = height
@@ -20,8 +23,11 @@ class Button:
             screen.blit(text, (self.__x + (self.__width / 2 - text.get_width() / 2),
                                            self.__y + (self.__height / 2 - text.get_height() / 2)))
 
-    def set_color(self, color):
-        self.__color = color
+    def set_color(self, color=None):
+        if color is None:
+            self.__color = self.__colorOrig
+        else:
+            self.__color = color
 
     def is_hovered(self, m_pos):
         if self.__x < m_pos[0] < self.__x + self.__width:
@@ -35,6 +41,7 @@ class MenuObject:
     """
         Docstring
     """
+
     def __init__(self, screen):
         self.__bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
         self.__screen = screen
@@ -98,13 +105,17 @@ class MenuObject:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
                     if self.__exitBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
                         self.__is__exit = True
                         break
+
                     elif self.__playBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
                         is_running = False
                         break
 
                     elif self.__soundBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
                         self.__soundMod = not self.__soundMod
 
                 if event.type == pygame.QUIT:

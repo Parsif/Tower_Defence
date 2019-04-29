@@ -6,14 +6,14 @@ from src.controllers import MenuObject
 
 def main():
     pygame.init()
-    GameObject.set_up_game()
     GmObj = GameObject()
     Menu = MenuObject(GmObj.get_screen)
+    GmObj.set_up_game()
     Menu.show_menu()
-
     if Menu.get_is_exit:
         return None
     # all_obj = pygame.sprite.Group()
+    GmObj.set_sound_mode(Menu.get_sound_mod)
     clock = pygame.time.Clock()
     is_running = True
     i = 0
@@ -42,6 +42,7 @@ def main():
                 m_pos = pygame.mouse.get_pos()
                 GmObj.tower_click(m_pos)
 
+
             if event.type == pygame.MOUSEMOTION:
                 m_pos = pygame.mouse.get_pos()
                 GmObj.towers_hover(m_pos)
@@ -51,6 +52,7 @@ def main():
         i += 1
 
     pygame.quit()
+
 
 
 if __name__ == '__main__':

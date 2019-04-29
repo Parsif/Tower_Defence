@@ -1,5 +1,6 @@
 import pygame
 from helper_modules import spider_imgs
+import helper_modules.sound as Sound
 
 
 class Mob(pygame.sprite.Sprite):
@@ -20,12 +21,9 @@ class Mob(pygame.sprite.Sprite):
         self.__anim_cnt = 4
         self.__imageSource = spider_imgs.spider_up
 
-        self.__hp = 200
         self._turns_dead = 0
 
-    @property
-    def get_hp(self):
-        return self.__hp
+
 
     @property
     def get_turns_dead(self):
@@ -95,15 +93,12 @@ class Mob(pygame.sprite.Sprite):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def take_damage(self, damage):
-        self.__hp -= damage
-
-
 
 class Spider(Mob):
     def __init__(self, start, path):
         Mob.__init__(self, start, path)
         self.image = spider_imgs.spider_down[0]
+        self.__hp = 200
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
 
     def draw_dead(self, screen):
@@ -111,4 +106,11 @@ class Spider(Mob):
         screen.blit(self.image, self.rect)
         self._turns_dead += 1
 
+    def take_damage(self, damage, sound_mode):
+        self.__hp -= damage
+        if self.__hp < 0 and sound_mode:
+            Sound.spider_death.play()
 
+    @property
+    def get_hp(self):
+        return self.__hp
