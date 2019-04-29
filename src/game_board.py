@@ -16,15 +16,14 @@ class Cell:
         self.__color = (0, 0, 0)
         self.drawMode = 1
 
-    def set_texture(self, towerPower=None):
         if self.__cellType == 0:
             self.__image = pygame.image.load(r'images/wasteland.jpg').convert()
 
         elif self.__cellType == 1:
             self.__image = pygame.image.load(r'images/road.jpg').convert()
 
-        elif self.__cellType == 2 and towerPower is not None:
-            self.__color = (255, 15 * towerPower, 15 * towerPower)
+        elif self.__cellType == 2:
+            self.__color = (255, 100, 100)
 
         elif self.__cellType == 5000:
             self.__image = pygame.image.load(r'images/castle.jpg').convert()
@@ -66,53 +65,6 @@ class Tower(Cell):
         self.range = 2
         self.drawMode = 2
 
-    def calc_power(self):
-        coord = self.get_coord()
-        x = coord['x']
-        y = coord['y']
-
-        # top
-        if GameBoard.BOARD_CELLS[x][y - self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + 1][y - self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + 2][y - self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - 1][y - self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - 2][y - self.range] == 1:
-            self.__power += 1
-
-        # right
-        if GameBoard.BOARD_CELLS[x + self.range][y - 1] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + self.range][y] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + self.range][y + 1] == 1:
-            self.__power += 1
-
-        # bottom
-        if GameBoard.BOARD_CELLS[x][y + self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + 1][y + self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x + 2][y + self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - 1][y + self.range] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - 2][y + self.range] == 1:
-            self.__power += 1
-
-        # left
-        if GameBoard.BOARD_CELLS[x - self.range][y - 1] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - self.range][y] == 1:
-            self.__power += 1
-        if GameBoard.BOARD_CELLS[x - self.range][y + 1] == 1:
-            self.__power += 1
-
-        return self.__power
-
 
 class GameBoard:
     """
@@ -143,21 +95,17 @@ class GameBoard:
             for cell in row:
                 if cell == 5000:
                     self.__Castle = Castle(cell, {'x': i, 'y': j})
-                    self.__Castle.set_texture()
                     self.__cells.append(self.__Castle)
                     self.__end['x'] = i
                     self.__end['y'] = j
 
                 elif cell == 2:
                     tw = Tower(cell, {'x': i, 'y': j})
-                    tw_pow = tw.calc_power()
-                    tw.set_texture(tw_pow)
                     self.__cells.append(tw)
                 else:
                     if cell == -5000:
                         self.__start.append({'x': i, 'y': j})
                     cl = Cell(cell, {'x': i, 'y': j})
-                    cl.set_texture()
                     self.__cells.append(cl)
                 j += 1
             i += 1
@@ -188,7 +136,6 @@ class GameBoard:
 
             board[tmp['x']][tmp['y']] = d
             d += 1
-
 
         return board
 
