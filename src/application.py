@@ -124,7 +124,7 @@ class GameObject:
                 mob.update()
 
     def spawn_mob(self):
-        index = randint(0, 2)
+        index = randint(0, len(self.__start) - 1)
         self.mobs.append(mob_module.Spider(self.__start[index], self.__path[index]))
 
     @staticmethod

@@ -192,7 +192,7 @@ class GameBoard:
         return path
 
     def __is_moving_top(self, coord: dict, board) -> tuple:
-        if board[coord['x']][coord['y'] - 1] == 1:
+        if coord['y'] - 1 >= 0 and board[coord['x']][coord['y'] - 1] == 1:
             return (True, {
                 'x': coord['x'],
                 'y': coord['y'] - 1
@@ -201,7 +201,7 @@ class GameBoard:
         return False, None
 
     def __is_moving_right(self, coord: dict, board) -> tuple:
-        if board[coord['x'] + 1][coord['y']] == 1:
+        if coord['x'] + 1 < len(board) and board[coord['x'] + 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] + 1,
                 'y': coord['y']
@@ -210,7 +210,7 @@ class GameBoard:
         return False, None
 
     def __is_moving_bottom(self, coord: dict, board) -> tuple:
-        if board[coord['x']][coord['y'] + 1] == 1:
+        if coord['y'] + 1 < len(board) and board[coord['x']][coord['y'] + 1] == 1:
             return (True, {
                 'x': coord['x'],
                 'y': coord['y'] + 1
@@ -219,7 +219,7 @@ class GameBoard:
         return False, None
 
     def __is_moving_left(self, coord: dict, board) -> tuple:
-        if board[coord['x'] - 1][coord['y']] == 1:
+        if coord['x'] - 1 >= 0 and board[coord['x'] - 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] - 1,
                 'y': coord['y']

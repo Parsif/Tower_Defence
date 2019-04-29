@@ -1,6 +1,6 @@
 import pygame
 
-pygame.display.set_mode((800, 800))
+pygame.display.set_mode((1000, 800))
 spider_down = []
 
 spider_down.append(pygame.image.load(r'images/spider/spider_down1.png'))
