@@ -121,12 +121,11 @@ class BasicTower(Tower):
         self.__cost = 100
         self.__fireCnt = self.SPEED
 
-
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
-    def fire(self, screen, mobs, sound_mode):
+    def fire(self, screen, mobs):
         self.__fireCnt += 1
 
         if self.__fireCnt % self.SPEED != 0:
@@ -136,12 +135,12 @@ class BasicTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage, sound_mode)
+        near_mob.take_damage(self.__damage)
         self._Particle.draw(screen)
 
 
 class FireTower(Tower):
-    SPEED = 10  # less is faster
+    SPEED = 5  # less is faster
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
@@ -149,12 +148,13 @@ class FireTower(Tower):
         self.__damage = 20
         self.__cost = 100
         self.__fireCnt = self.SPEED
+        self.__EFFECT = 'fire'
 
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
-    def fire(self, screen, mobs, sound_mode):
+    def fire(self, screen, mobs):
         self.__fireCnt += 1
 
         if self.__fireCnt % self.SPEED != 0:
@@ -164,7 +164,7 @@ class FireTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage, sound_mode)
+        near_mob.take_damage(self.__damage, self.__EFFECT)
         self._Particle.draw(screen)
 
 
@@ -177,12 +177,13 @@ class IceTower(Tower):
         self.__damage = 20
         self.__cost = 100
         self.__fireCnt = self.SPEED
+        self.__EFFECT = 'ice'
 
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
-    def fire(self, screen, mobs, sound_mode):
+    def fire(self, screen, mobs):
         self.__fireCnt += 1
 
         if self.__fireCnt % self.SPEED != 0:
@@ -192,5 +193,5 @@ class IceTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage, sound_mode)
+        near_mob.take_damage(self.__damage, self.__EFFECT)
         self._Particle.draw(screen)

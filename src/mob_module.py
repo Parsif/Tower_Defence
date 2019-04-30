@@ -1,6 +1,7 @@
 import pygame
 from helper_modules import spider_imgs
-import helper_modules.sound as Sound
+from helper_modules import tower_img
+from helper_modules.sound import Sound
 
 
 class Mob(pygame.sprite.Sprite):
@@ -11,7 +12,7 @@ class Mob(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self._start = start
         self._path = path
-        self.image = None
+        self.images = []
         self.__coord = {'x': 0, 'y': 0}
         self.is_end_reached = False
 
@@ -22,7 +23,8 @@ class Mob(pygame.sprite.Sprite):
         self.__imageSource = spider_imgs.spider_up
 
         self._turns_dead = 0
-
+        self._fireCnt = 0
+        self._iceCnt = 0
 
 
     @property
@@ -82,16 +84,29 @@ class Mob(pygame.sprite.Sprite):
             self.rect.move_ip(0, dy)
 
     def update(self, *args):
+        self.images.clear()
         self.__take_a_step()
         self.__upgrade_anim()
 
         self.__imageCnt += 1
         if self.__imageCnt == len(self.__imageSource):
             self.__imageCnt = 0
-        self.image = self.__imageSource[self.__imageCnt]
+        self.images.append(self.__imageSource[self.__imageCnt])
+        if 1 <= self._fireCnt < 6:
+            self.images.append(tower_img.fire)
+            self._fireCnt += 1
+        else:
+            self._fireCnt = 0
+
+        if 1 <= self._iceCnt < 6:
+            self.images.append(tower_img.ice)
+            self._iceCnt += 1
+        else:
+            self._iceCnt = 0
 
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
+        for img in self.images:
+            screen.blit(img, self.rect)
 
 
 class Spider(Mob):
@@ -106,10 +121,21 @@ class Spider(Mob):
         screen.blit(self.image, self.rect)
         self._turns_dead += 1
 
-    def take_damage(self, damage, sound_mode):
+    def take_damage(self, damage, effect=None):
         self.__hp -= damage
-        if self.__hp < 0 and sound_mode:
+        if self.__hp < 0 and Sound.soundMode:
             Sound.spider_death.play()
+
+        else:
+            if effect == 'fire':
+                self._fireCnt = 1
+            elif effect == 'ice':
+                self._iceCnt = 1
+
+    def update(self, *args):
+        super().update()
+        # if  1 <= self._fireCnt < 6:
+        #     self.take_damage()
 
     @property
     def get_hp(self):

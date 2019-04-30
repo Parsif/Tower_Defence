@@ -1,6 +1,6 @@
 import pygame
 import helper_modules.game_dsp as GD
-import helper_modules.sound as Sound
+from helper_modules.sound import Sound
 
 
 class Button:

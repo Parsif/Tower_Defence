@@ -5,7 +5,7 @@ from src.cell import BasicTower, FireTower, IceTower
 from src import mob_module
 from src.controllers import Button
 from helper_modules import tower_img
-import helper_modules.sound as Sound
+from helper_modules.sound import Sound
 
 
 class GameObject:
@@ -13,7 +13,6 @@ class GameObject:
         Docstring
     """
     def __init__(self):
-        self.__soundMode = True
         self.__txtFont = pygame.font.SysFont('impact', 20)
         self.__screen = pygame.display.set_mode((1000, 800))
         self.__bgMusic = Sound.bgMusic1
@@ -30,15 +29,11 @@ class GameObject:
         self.__fire_towers = []  # tower which can fire
         self.__dead_mobs = []
 
-
     @staticmethod
     def set_up_game():
         logo = pygame.image.load(r'images/logo.png')
         pygame.display.set_icon(logo)
         pygame.display.set_caption("Tower Defence")
-
-    def set_sound_mode(self, mode):
-        self.__soundMode = mode
 
     @property
     def get_screen(self):
@@ -47,8 +42,8 @@ class GameObject:
     def clean_screen(self):
         self.__screen.fill((0, 0, 0))
 
-    def init_board(self):
-        self.__GB.draw_board(self.__screen, self.__towers)
+    def draw_board(self):
+        self.__GB.draw(self.__screen, self.__towers)
 
     def draw_mobs(self):
         for mob in self.mobs:
@@ -85,7 +80,7 @@ class GameObject:
         is_running = True
         basicBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE - 30, (0, 0, 150))
         fireBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE - 30, (0, 0, 150))
-        iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 51, coord['y'] * tower.SIZE - 30, (0, 0, 150))
+        iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 50, coord['y'] * tower.SIZE - 30, (0, 0, 150))
 
         while is_running:
             basicBtn.draw(self.__screen, 11, 'Basic Tower')
@@ -117,15 +112,19 @@ class GameObject:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
                     if basicBtn.is_hovered(m_pos):
-                        Sound.btnClick.play()
+                        if Sound.soundMode:
+                            Sound.btnClick.play()
                         return BasicTower(tower)
 
                     if fireBtn.is_hovered(m_pos):
-                        Sound.btnClick.play()
+                        if Sound.soundMode:
+                            Sound.btnClick.play()
+
                         return FireTower(tower)
 
                     if iceBtn.is_hovered(m_pos):
-                        Sound.btnClick.play()
+                        if Sound.soundMode:
+                            Sound.btnClick.play()
                         return IceTower(tower)
 
             pygame.display.update()
@@ -159,7 +158,7 @@ class GameObject:
 
     def tw_fire(self):
         for tower in self.__fire_towers:
-            tower.fire(self.__screen, self.mobs, self.__soundMode)
+            tower.fire(self.__screen, self.mobs)
 
     def draw_dead_mb(self):
         i = 0
@@ -174,3 +173,4 @@ class GameObject:
 
 
 
+GmObj = GameObject()

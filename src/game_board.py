@@ -57,7 +57,7 @@ class GameBoard:
                 j += 1
             i += 1
 
-    def draw_board(self, screen, towers):
+    def draw(self, screen, towers):
         for cell in self.__cells:
             cell.draw(screen)
         for tower in towers:
