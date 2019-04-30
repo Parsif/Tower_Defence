@@ -1,7 +1,10 @@
 import pygame
-from src.gm_obj import GameObject
-from src.controllers import MenuObject
+
 from helper_modules.sound import Sound
+from src.controllers import MenuObject
+from src.gm_obj import GameObject
+
+
 # from pygame.locals import *
 
 
@@ -31,6 +34,7 @@ def main():
         GmObj.draw_dead_mb()
         GmObj.show_cst_hp()
         GmObj.tw_fire()
+        GmObj.show_shot()
 
         if i == 15:
             GmObj.spawn_mob()

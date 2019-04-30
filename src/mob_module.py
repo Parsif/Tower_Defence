@@ -32,6 +32,8 @@ class Mob(pygame.sprite.Sprite):
         self._SPEED = 0  # less is better
         self._speedCnt = 0
         self._iceSlow = 0
+        self._fireLastFor = 100
+        self._iceLastFor = 100
 
 
     @property
@@ -102,14 +104,14 @@ class Mob(pygame.sprite.Sprite):
                 self.__imageCnt = 0
             self.images.append(self.__imageSource[self.__imageCnt])
 
-        if 1 <= self._fireCnt < 6:
+        if 1 <= self._fireCnt < self._fireLastFor:
             self.images.append(tower_img.fire)
             self._fireCnt += 1
         else:
             self._fireCnt = 0
             self._fireDgm = 0
 
-        if 1 <= self._iceCnt < 6:
+        if 1 <= self._iceCnt < self._iceLastFor:
             self.images.append(tower_img.ice)
             self._iceCnt += 1
         else:
@@ -144,12 +146,13 @@ class Spider(Mob):
             if effect['type'] == 'fire':
                 self._fireCnt = 1
                 self._fireDgm = effect['damage']
+                self._fireLastFor = effect['last']
             elif effect['type'] == 'ice':
                 self._iceCnt = 1
                 self._iceSlow = effect['slow']
+                self._iceLastFor = effect['last']
             # elif effect['type'] == 'poison':
             #     self._iceCnt = 1
-
 
     def update(self, *args):
         super().update()

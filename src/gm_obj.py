@@ -232,4 +232,7 @@ class GameObject:
         for tower in self.__fire_towers:
             tower.build(self.__screen)
 
-
+    def show_shot(self):
+        for tower in self.__fire_towers:
+            if tower.get_shot_cnt != 0:
+                tower.show_shot(self.__screen)
