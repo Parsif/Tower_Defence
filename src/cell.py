@@ -1,6 +1,8 @@
 import pygame
+
 from helper_modules import tower_img
 from helper_modules.sound import Sound
+
 
 class Particle:
     speed = 15
@@ -122,29 +124,51 @@ class Tower(Cell):
         if 1 <= self._buildCnt <= 40:
 
             if self._buildCnt in range(1, 5):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
                 screen.blit(tower_img.hmrStrikes[0], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
                 if Sound.soundMode:
                     Sound.towerConstruct.play()
 
             elif self._buildCnt in range(6, 10):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[1], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(11, 15):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[2], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(16, 20):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[3], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(21, 25):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
                 screen.blit(tower_img.hmrStrikes[0], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(26, 30):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[1], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(31, 35):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[2], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             elif self._buildCnt in range(36, 40):
+                coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+                pygame.draw.rect(screen, self._color, [coord[0], coord[1], 40, 40])
+
                 screen.blit(tower_img.hmrStrikes[3], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
 
             screen.blit(tower_img.wood, (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE + 5))
@@ -164,6 +188,7 @@ class BasicTower(Tower):
         self.__fireCnt = self.SPEED
 
     def draw(self, screen):
+        super().draw(screen)
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
@@ -196,6 +221,7 @@ class FireTower(Tower):
         self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
 
     def draw(self, screen):
+        super().draw(screen)
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
@@ -228,6 +254,7 @@ class IceTower(Tower):
         self.__EFFECT = {'type': 'ice', 'slow': self.__SLOW}
 
     def draw(self, screen):
+        super().draw(screen)
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
@@ -260,6 +287,7 @@ class DarkTower(Tower):
         # self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
 
     def draw(self, screen):
+        super().draw(screen)
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
@@ -292,6 +320,7 @@ class PoisonTower(Tower):
         self.__EFFECT = {'type': 'poison', 'poison': self.__POISON_DAMAGE}
 
     def draw(self, screen):
+        super().draw(screen)
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
