@@ -1,6 +1,6 @@
 import pygame
 from helper_modules import tower_img
-
+from helper_modules.sound import Sound
 
 class Particle:
     speed = 15
@@ -54,6 +54,7 @@ class Cell:
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         screen.blit(self.__image, coord)
 
+    @property
     def get_coord(self):
         return self._coord
 
@@ -77,9 +78,9 @@ class Tower(Cell):
         self.__power = 0
         self.range = 2
         self._color = (255, 100, 100)
+        self._buildCnt = 0
         self._Particle = Particle(self._coord['x'] * self.SIZE + self.SIZE // 2,
                                   self._coord['y'] * self.SIZE + self.SIZE // 3)
-
 
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
@@ -87,6 +88,13 @@ class Tower(Cell):
 
     def set_color(self, color=(255, 100, 100)):
         self._color = color
+
+    def set_build_cnt(self):
+        self._buildCnt = 1
+
+    @property
+    def get_build_cnt(self):
+        return self._buildCnt
 
     def is_hovered(self, m_pos):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
@@ -110,6 +118,40 @@ class Tower(Cell):
 
         return None
 
+    def build(self, screen):
+        if 1 <= self._buildCnt <= 40:
+
+            if self._buildCnt in range(1, 5):
+                screen.blit(tower_img.hmrStrikes[0], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+                if Sound.soundMode:
+                    Sound.towerConstruct.play()
+
+            elif self._buildCnt in range(6, 10):
+                screen.blit(tower_img.hmrStrikes[1], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(11, 15):
+                screen.blit(tower_img.hmrStrikes[2], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(16, 20):
+                screen.blit(tower_img.hmrStrikes[3], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(21, 25):
+                screen.blit(tower_img.hmrStrikes[0], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(26, 30):
+                screen.blit(tower_img.hmrStrikes[1], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(31, 35):
+                screen.blit(tower_img.hmrStrikes[2], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            elif self._buildCnt in range(36, 40):
+                screen.blit(tower_img.hmrStrikes[3], (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - 20))
+
+            screen.blit(tower_img.wood, (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE + 5))
+            self._buildCnt += 1
+        else:
+            self._buildCnt = 0
+
 
 class BasicTower(Tower):
     SPEED = 10  # less is faster
@@ -117,8 +159,8 @@ class BasicTower(Tower):
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self.__image = tower_img.basicTw1
-        self.__damage = 20
-        self.__cost = 100
+        self.__DAMAGE = 20
+        self.__COST = 100
         self.__fireCnt = self.SPEED
 
     def draw(self, screen):
@@ -135,20 +177,23 @@ class BasicTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage)
+        if Sound.soundMode:
+            Sound.basicTwShot.play()
+        near_mob.take_damage(self.__DAMAGE)
         self._Particle.draw(screen)
 
 
 class FireTower(Tower):
-    SPEED = 5  # less is faster
+    SPEED = 15  # less is faster
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self.__image = tower_img.fireTw1
-        self.__damage = 20
-        self.__cost = 100
+        self.__DAMAGE = 15
+        self.__COST = 100
         self.__fireCnt = self.SPEED
-        self.__EFFECT = 'fire'
+        self.__FIRE_DAMAGE = 5
+        self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
 
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
@@ -164,20 +209,23 @@ class FireTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage, self.__EFFECT)
+        if Sound.soundMode:
+            Sound.fireTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
         self._Particle.draw(screen)
 
 
 class IceTower(Tower):
-    SPEED = 10  # less is faster
+    SPEED = 15  # less is faster
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self.__image = tower_img.iceTw1
-        self.__damage = 20
-        self.__cost = 100
+        self.__DAMAGE = 20
+        self.__COST = 100
         self.__fireCnt = self.SPEED
-        self.__EFFECT = 'ice'
+        self.__SLOW = 7
+        self.__EFFECT = {'type': 'ice', 'slow': self.__SLOW}
 
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
@@ -193,5 +241,72 @@ class IceTower(Tower):
         if near_mob is None:
             return None
 
-        near_mob.take_damage(self.__damage, self.__EFFECT)
+        if Sound.soundMode:
+            Sound.iceTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        self._Particle.draw(screen)
+
+
+class DarkTower(Tower):
+    SPEED = 10  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.darkTw1
+        self.__DAMAGE = 30
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__FIRE_DAMAGE = 5
+        # self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
+
+    def draw(self, screen):
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.darkTwShot.play()
+        near_mob.take_damage(self.__DAMAGE)
+        self._Particle.draw(screen)
+
+
+
+class PoisonTower(Tower):
+    SPEED = 15  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.poisonTw1
+        self.__DAMAGE = 20
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__POISON_DAMAGE = 7
+        self.__EFFECT = {'type': 'poison', 'poison': self.__POISON_DAMAGE}
+
+    def draw(self, screen):
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.poisonTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
         self._Particle.draw(screen)

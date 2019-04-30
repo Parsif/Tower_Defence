@@ -1,11 +1,11 @@
 import pygame
 from random import randint
 from src.game_board import GameBoard
-from src.cell import BasicTower, FireTower, IceTower
+from src.cell import BasicTower, FireTower, IceTower, DarkTower, PoisonTower
 from src import mob_module
 from src.controllers import Button
-from helper_modules import tower_img
 from helper_modules.sound import Sound
+
 
 
 class GameObject:
@@ -13,9 +13,10 @@ class GameObject:
         Docstring
     """
     def __init__(self):
+        self.is_exit = None
         self.__txtFont = pygame.font.SysFont('impact', 20)
         self.__screen = pygame.display.set_mode((1000, 800))
-        self.__bgMusic = Sound.bgMusic1
+        self.__bgMusic = Sound.bgMusic2
         self.__GB = GameBoard()
         self.__Castle = self.__GB.get_castle
         self.__towers = self.__GB.get_towers  # just placeholders for tower
@@ -76,38 +77,53 @@ class GameObject:
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
 
     def __choose_tower(self, tower):
-        coord = tower.get_coord()
+        coord = tower.get_coord
         is_running = True
-        basicBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE - 30, (0, 0, 150))
-        fireBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE - 30, (0, 0, 150))
-        iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 50, coord['y'] * tower.SIZE - 30, (0, 0, 150))
+        basicBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        fireBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 50, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        darkBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE + 40, (255, 255, 0))
+        poisonBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE + 40, (255, 255, 0))
+
 
         while is_running:
-            basicBtn.draw(self.__screen, 11, 'Basic Tower')
-            fireBtn.draw(self.__screen, 11, 'Fire Tower')
-            iceBtn.draw(self.__screen, 11, 'Ice Tower')
+            basicBtn.draw(self.__screen, 13, 'Basic')
+            fireBtn.draw(self.__screen, 13, 'Fire')
+            iceBtn.draw(self.__screen, 13, 'Ice')
+            darkBtn.draw(self.__screen, 13, 'Dark')
+            poisonBtn.draw(self.__screen, 13, 'Poison')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.is_exit = True
                     return None
 
                 if event.type == pygame.MOUSEMOTION:
                     m_pos = pygame.mouse.get_pos()
                     if basicBtn.is_hovered(m_pos):
-                        basicBtn.set_color((0, 0, 255))
+                        basicBtn.set_color((0, 0, 200))
                     else:
                         basicBtn.set_color()
 
                     if fireBtn.is_hovered(m_pos):
-                        fireBtn.set_color((0, 0, 255))
+                        fireBtn.set_color((0, 0, 200))
                     else:
                         fireBtn.set_color()
 
                     if iceBtn.is_hovered(m_pos):
-                        iceBtn.set_color((0, 0, 255))
+                        iceBtn.set_color((0, 0, 200))
                     else:
                         iceBtn.set_color()
 
+                    if darkBtn.is_hovered(m_pos):
+                        darkBtn.set_color((0, 0, 200))
+                    else:
+                        darkBtn.set_color()
+
+                    if poisonBtn.is_hovered(m_pos):
+                        poisonBtn.set_color((0, 0, 200))
+                    else:
+                        poisonBtn.set_color()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
@@ -116,24 +132,34 @@ class GameObject:
                             Sound.btnClick.play()
                         return BasicTower(tower)
 
-                    if fireBtn.is_hovered(m_pos):
+                    elif fireBtn.is_hovered(m_pos):
                         if Sound.soundMode:
                             Sound.btnClick.play()
 
                         return FireTower(tower)
 
-                    if iceBtn.is_hovered(m_pos):
+                    elif iceBtn.is_hovered(m_pos):
                         if Sound.soundMode:
                             Sound.btnClick.play()
                         return IceTower(tower)
 
+                    elif darkBtn.is_hovered(m_pos):
+                        if Sound.soundMode:
+                            Sound.btnClick.play()
+
+                        return DarkTower(tower)
+
+                    elif poisonBtn.is_hovered(m_pos):
+                        if Sound.soundMode:
+                            Sound.btnClick.play()
+
+                        return PoisonTower(tower)
+
+                    else:
+                        return None
+
             pygame.display.update()
 
-    def __build_tower(self, tower):
-        for i in range(5):
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return None
 
     def towers_hover(self, m_pos):
         for tower in self.__towers:
@@ -145,12 +171,17 @@ class GameObject:
     def tower_click(self, m_pos):
         for tower in self.__towers:
             if tower.is_hovered(m_pos):
+                # draw radius square
+                coord = tower.get_coord
+                pygame.draw.rect(self.__screen, (255, 0, 0), (coord['x'] * tower.SIZE - tower.SIZE * 2,
+                                                              coord['y'] * tower.SIZE - tower.SIZE * 2,
+                                                              tower.SIZE * 5, tower.SIZE * 5), 2)
                 tmp = tower
                 del tower
                 newTower = self.__choose_tower(tmp)
                 if newTower is None:
                     return None
-                self.__build_tower(newTower)
+                newTower.set_build_cnt()
                 self.__fire_towers.append(newTower)
 
         for tower in self.__fire_towers:
@@ -158,7 +189,8 @@ class GameObject:
 
     def tw_fire(self):
         for tower in self.__fire_towers:
-            tower.fire(self.__screen, self.mobs)
+            if tower.get_build_cnt == 0:
+                tower.fire(self.__screen, self.mobs)
 
     def draw_dead_mb(self):
         i = 0
@@ -168,6 +200,10 @@ class GameObject:
             else:
                 self.__dead_mobs.pop(i)
             i += 1
+
+    def build_towers(self):
+        for tower in self.__fire_towers:
+            tower.build(self.__screen)
 
 
 

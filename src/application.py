@@ -10,7 +10,8 @@ def main():
     Menu = MenuObject(GmObj.get_screen)
     GmObj.set_up_game()
     Menu.show_menu()
-    if Menu.get_is_exit:
+    GmObj.is_exit = Menu.get_is_exit
+    if GmObj.is_exit:
         return None
 
     # all_obj = pygame.sprite.Group()
@@ -23,14 +24,14 @@ def main():
 
     GmObj.spawn_mob()
     while is_running:
-        clock.tick(10)
+        clock.tick(20)
         GmObj.draw_board()
         GmObj.draw_mobs()
         GmObj.draw_dead_mb()
         GmObj.show_cst_hp()
         GmObj.tw_fire()
 
-        if i == 10:
+        if i == 15:
             GmObj.spawn_mob()
             i = 0
 
@@ -47,6 +48,9 @@ def main():
                 m_pos = pygame.mouse.get_pos()
                 GmObj.towers_hover(m_pos)
 
+        if GmObj.is_exit:
+            break
+        GmObj.build_towers()
         pygame.display.update()
         GmObj.update_mobs()
         i += 1

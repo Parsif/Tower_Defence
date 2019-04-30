@@ -8,6 +8,10 @@ fireTw1 = pygame.image.load(r'images/tower/fireTower1.png')
 
 iceTw1 = pygame.image.load(r'images/tower/iceTower1.png')
 
+darkTw1 = pygame.image.load(r'images/tower/darkTower1.png')
+
+poisonTw1 = pygame.image.load(r'images/tower/poisonTower1.png')
+
 
 hmrStrikes = [
     pygame.image.load(r'images/tower/hammerstrike1.png'),

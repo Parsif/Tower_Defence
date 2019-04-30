@@ -61,7 +61,9 @@ class GameBoard:
         for cell in self.__cells:
             cell.draw(screen)
         for tower in towers:
-            tower.draw(screen)
+            if tower.get_build_cnt == 0:
+                tower.draw(screen)
+
 
     def __mark_path(self, start):
         board = deepcopy(self.BOARD_CELLS)
