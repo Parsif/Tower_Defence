@@ -4,7 +4,7 @@ import pygame
 
 from helper_modules.sound import Sound
 from src import mob_module
-from src.cell import towers
+from src.cell import towers, Tower
 from src.controllers import Button
 from src.game_board import GameBoard
 
@@ -77,9 +77,37 @@ class GameObject:
         hp = self.__Castle.get_hp
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
 
-    def change_tw_state(self, tower, is_upgrade=None):
+    def __change_tw_state(self, tower, is_upgrade=None):
+        coord = tower.get_coord
+        sellBtn = Button(60, 25, coord['x'] * tower.SIZE - tower.SIZE / 2, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        while True:
+            sellBtn.draw(self.__screen, 13, 'Sell')
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.is_exit = True
+                    return None
 
-        pass
+                if event.type == pygame.MOUSEMOTION:
+                    m_pos = pygame.mouse.get_pos()
+                    if sellBtn.is_hovered(m_pos):
+                        sellBtn.set_color((0, 0, 200))
+                    else:
+                        sellBtn.set_color()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    m_pos = pygame.mouse.get_pos()
+                    if sellBtn.is_hovered(m_pos):
+                        tmp_index = self.__towers.index(tower)
+                        del self.__towers[tmp_index]
+
+                        tmp_index = self.__fire_towers.index(tower)
+                        del self.__fire_towers[tmp_index]
+
+                        self.__towers.append(Tower(2, {'x': coord['x'], 'y': coord['y']}))
+                    return None
+
+            pygame.display.update()
+
 
     def __choose_tower(self, tower):
         coord = tower.get_coord
@@ -141,25 +169,20 @@ class GameObject:
                 pygame.draw.rect(self.__screen, (255, 0, 0), (coord['x'] * tower.SIZE - tower.SIZE * 2,
                                                               coord['y'] * tower.SIZE - tower.SIZE * 2,
                                                               tower.SIZE * 5, tower.SIZE * 5), 2)
-                # tmp = self.__towers.pop(i)
-                # i -= 1
 
-                tmp = self.__towers[i]
-
-
-                if type(tmp) in towers:
+                if type(self.__towers[i]) in towers:
+                    self.__change_tw_state(self.__towers[i])
                     return None
 
-                newTower = self.__choose_tower(tmp)
-                if newTower is None:
+                new_tower = self.__choose_tower(self.__towers[i])
+                if new_tower is None:
                     return None
-                newTower.set_build_cnt()
-                if newTower not in self.__fire_towers:
-                    self.__towers[i] = newTower
-                    self.__fire_towers.append(newTower)
+                new_tower.set_build_cnt()
+                if new_tower not in self.__fire_towers:
+                    self.__towers[i] = new_tower
+                    self.__fire_towers.append(new_tower)
 
             i += 1
-
 
     def tw_fire(self):
         for tower in self.__fire_towers:
