@@ -45,7 +45,6 @@ class GameObject:
         self.__screen.fill((0, 0, 0))
 
     def draw_board(self):
-        print(len(self.__towers))
         self.__GB.draw(self.__screen, self.__towers)
 
     def draw_mobs(self):
@@ -142,25 +141,24 @@ class GameObject:
                 pygame.draw.rect(self.__screen, (255, 0, 0), (coord['x'] * tower.SIZE - tower.SIZE * 2,
                                                               coord['y'] * tower.SIZE - tower.SIZE * 2,
                                                               tower.SIZE * 5, tower.SIZE * 5), 2)
-                tmp = self.__towers.pop(i)
-                i -= 1
+                # tmp = self.__towers.pop(i)
+                # i -= 1
+
+                tmp = self.__towers[i]
+
 
                 if type(tmp) in towers:
-                    print("h")
+                    return None
 
                 newTower = self.__choose_tower(tmp)
                 if newTower is None:
-                    self.__towers.append(tmp)
                     return None
                 newTower.set_build_cnt()
                 if newTower not in self.__fire_towers:
+                    self.__towers[i] = newTower
                     self.__fire_towers.append(newTower)
 
             i += 1
-
-        for tower in self.__fire_towers:
-            if tower not in self.__towers:
-                self.__towers.append(tower)
 
 
     def tw_fire(self):
