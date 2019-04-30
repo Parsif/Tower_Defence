@@ -4,7 +4,7 @@ import pygame
 
 from helper_modules.sound import Sound
 from src import mob_module
-from src.cell import towers, Tower
+from src.cell import tw_lvl1, tw_lvl2, Tower
 from src.controllers import Button
 from src.game_board import GameBoard
 
@@ -17,7 +17,6 @@ class GameObject:
         self.is_exit = None
         self.__txtFont = pygame.font.SysFont('impact', 20)
         self.__screen = pygame.display.set_mode((1000, 800))
-        self.__bgMusic = Sound.bgMusic2
         self.__GB = GameBoard()
         self.__Castle = self.__GB.get_castle
         self.__towers = self.__GB.get_towers  # just placeholders for tower
@@ -77,10 +76,17 @@ class GameObject:
         hp = self.__Castle.get_hp
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
 
-    def __change_tw_state(self, tower, is_upgrade=None):
+    def __change_tw_state(self, tower, upgrade=None):
         coord = tower.get_coord
-        sellBtn = Button(60, 25, coord['x'] * tower.SIZE - tower.SIZE / 2, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        upgradeBtn = None
+        if upgrade is not None:
+            upgradeBtn = Button(60, 25, coord['x'] * tower.SIZE + 23, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        sellBtn = Button(60, 25, coord['x'] * tower.SIZE - 39, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+
         while True:
+            if upgradeBtn is not None:
+                upgradeBtn.draw(self.__screen, 13, 'Upgrade')
+
             sellBtn.draw(self.__screen, 13, 'Sell')
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -94,6 +100,12 @@ class GameObject:
                     else:
                         sellBtn.set_color()
 
+                    if upgrade is not None:
+                        if upgradeBtn.is_hovered(m_pos):
+                            upgradeBtn.set_color((0, 0, 200))
+                        else:
+                            upgradeBtn.set_color()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
                     if sellBtn.is_hovered(m_pos):
@@ -104,14 +116,19 @@ class GameObject:
                         del self.__fire_towers[tmp_index]
 
                         self.__towers.append(Tower(2, {'x': coord['x'], 'y': coord['y']}))
+                        if Sound.soundMode:
+                            Sound.towerSell.play()
+
+                    if upgrade is not None:
+                        if upgradeBtn.is_hovered(m_pos):
+                            return upgrade(tower)
+
                     return None
 
             pygame.display.update()
 
-
     def __choose_tower(self, tower):
         coord = tower.get_coord
-        is_running = True
         basicBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE - 30, (255, 255, 0))
         fireBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE - 30, (255, 255, 0))
         iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 50, coord['y'] * tower.SIZE - 30, (255, 255, 0))
@@ -119,8 +136,7 @@ class GameObject:
         poisonBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE + 40, (255, 255, 0))
         btns = [basicBtn, fireBtn, iceBtn, darkBtn, poisonBtn]
 
-
-        while is_running:
+        while True:
             basicBtn.draw(self.__screen, 13, 'Basic')
             fireBtn.draw(self.__screen, 13, 'Fire')
             iceBtn.draw(self.__screen, 13, 'Ice')
@@ -146,7 +162,7 @@ class GameObject:
                         if btns[i].is_hovered(m_pos):
                             if Sound.soundMode:
                                 Sound.btnClick.play()
-                            return towers[i](tower)
+                            return tw_lvl1[i](tower)
 
                     tower.set_color()
                     return None
@@ -170,13 +186,27 @@ class GameObject:
                                                               coord['y'] * tower.SIZE - tower.SIZE * 2,
                                                               tower.SIZE * 5, tower.SIZE * 5), 2)
 
-                if type(self.__towers[i]) in towers:
-                    self.__change_tw_state(self.__towers[i])
-                    return None
+                tmp = self.__towers[i]
+                for j in range(len(tw_lvl2)):
+                    if type(tmp) is tw_lvl2[j]:
+                        self.__change_tw_state(tmp)
+                        return None
 
-                new_tower = self.__choose_tower(self.__towers[i])
+                for j in range(len(tw_lvl1)):
+                    if type(tmp) is tw_lvl1[j]:
+                        new_tower = self.__change_tw_state(tmp, tw_lvl2[j])
+                        if new_tower is None:
+                            return None
+                        new_tower.set_build_cnt()
+                        index_f_tw = self.__fire_towers.index(tmp)
+                        self.__towers[i] = new_tower
+                        self.__fire_towers[index_f_tw] = new_tower
+                        return None
+
+                new_tower = self.__choose_tower(tmp)
                 if new_tower is None:
                     return None
+
                 new_tower.set_build_cnt()
                 if new_tower not in self.__fire_towers:
                     self.__towers[i] = new_tower

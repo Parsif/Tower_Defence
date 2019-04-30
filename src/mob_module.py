@@ -1,4 +1,5 @@
 import pygame
+
 from helper_modules import spider_imgs
 from helper_modules import tower_img
 from helper_modules.sound import Sound
@@ -136,7 +137,7 @@ class Spider(Mob):
 
     def take_damage(self, damage, effect=None):
         self.__hp -= damage
-        if self.__hp < 0 and Sound.soundMode:
+        if self.__hp <= 0 and Sound.soundMode:
             Sound.spider_death.play()
 
         elif effect is not None:

@@ -342,4 +342,169 @@ class PoisonTower(Tower):
         self._Particle.draw(screen)
 
 
-towers = (BasicTower, FireTower, IceTower, DarkTower, PoisonTower)
+class BasicTower2(Tower):
+    SPEED = 10  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.basicTw2
+        self.__DAMAGE = 40
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+
+    def draw(self, screen):
+        super().draw(screen)
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.basicTwShot.play()
+        near_mob.take_damage(self.__DAMAGE)
+        self._Particle.draw(screen)
+
+
+class FireTower2(Tower):
+    SPEED = 15  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.fireTw2
+        self.__DAMAGE = 30
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__FIRE_DAMAGE = 10
+        self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
+
+    def draw(self, screen):
+        super().draw(screen)
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.fireTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        self._Particle.draw(screen)
+
+
+class IceTower2(Tower):
+    SPEED = 15  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.iceTw2
+        self.__DAMAGE = 50
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__SLOW = 7
+        self.__EFFECT = {'type': 'ice', 'slow': self.__SLOW}
+
+    def draw(self, screen):
+        super().draw(screen)
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.iceTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        self._Particle.draw(screen)
+
+
+class DarkTower2(Tower):
+    SPEED = 10  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.darkTw2
+        self.__DAMAGE = 300
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__FIRE_DAMAGE = 5
+        # self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
+
+    def draw(self, screen):
+        super().draw(screen)
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.darkTwShot.play()
+        near_mob.take_damage(self.__DAMAGE)
+        self._Particle.draw(screen)
+
+
+class PoisonTower2(Tower):
+    SPEED = 15  # less is faster
+
+    def __init__(self, tower):
+        Tower.__init__(self, tower._cellType, tower._coord)
+        self.__image = tower_img.poisonTw2
+        self.__DAMAGE = 30
+        self.__COST = 100
+        self.__fireCnt = self.SPEED
+        self.__POISON_DAMAGE = 15
+        self.__EFFECT = {'type': 'poison', 'poison': self.__POISON_DAMAGE}
+
+    def draw(self, screen):
+        super().draw(screen)
+        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        screen.blit(self.__image, coord)
+
+    def fire(self, screen, mobs):
+        self.__fireCnt += 1
+
+        if self.__fireCnt % self.SPEED != 0:
+            return None
+
+        near_mob = self._find_mob(mobs)
+        if near_mob is None:
+            return None
+
+        if Sound.soundMode:
+            Sound.poisonTwShot.play()
+        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        self._Particle.draw(screen)
+
+
+tw_lvl1 = (BasicTower, FireTower, IceTower, DarkTower, PoisonTower)
+
+tw_lvl2 = (BasicTower2, FireTower2, IceTower2, DarkTower2, PoisonTower2)
