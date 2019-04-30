@@ -1,7 +1,7 @@
 import pygame
 from random import randint
 from src.game_board import GameBoard
-from src.cell import BasicTower, FireTower, IceTower, DarkTower, PoisonTower
+from src.cell import towers
 from src import mob_module
 from src.controllers import Button
 from helper_modules.sound import Sound
@@ -84,6 +84,7 @@ class GameObject:
         iceBtn = Button(60, 25, coord['x'] * tower.SIZE + 50, coord['y'] * tower.SIZE - 30, (255, 255, 0))
         darkBtn = Button(60, 25, coord['x'] * tower.SIZE - 72, coord['y'] * tower.SIZE + 40, (255, 255, 0))
         poisonBtn = Button(60, 25, coord['x'] * tower.SIZE - 11, coord['y'] * tower.SIZE + 40, (255, 255, 0))
+        btns = [basicBtn, fireBtn, iceBtn, darkBtn, poisonBtn]
 
 
         while is_running:
@@ -100,63 +101,21 @@ class GameObject:
 
                 if event.type == pygame.MOUSEMOTION:
                     m_pos = pygame.mouse.get_pos()
-                    if basicBtn.is_hovered(m_pos):
-                        basicBtn.set_color((0, 0, 200))
-                    else:
-                        basicBtn.set_color()
-
-                    if fireBtn.is_hovered(m_pos):
-                        fireBtn.set_color((0, 0, 200))
-                    else:
-                        fireBtn.set_color()
-
-                    if iceBtn.is_hovered(m_pos):
-                        iceBtn.set_color((0, 0, 200))
-                    else:
-                        iceBtn.set_color()
-
-                    if darkBtn.is_hovered(m_pos):
-                        darkBtn.set_color((0, 0, 200))
-                    else:
-                        darkBtn.set_color()
-
-                    if poisonBtn.is_hovered(m_pos):
-                        poisonBtn.set_color((0, 0, 200))
-                    else:
-                        poisonBtn.set_color()
+                    for btn in btns:
+                        if btn.is_hovered(m_pos):
+                            btn.set_color((0, 0, 200))
+                        else:
+                            btn.set_color()
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
-                    if basicBtn.is_hovered(m_pos):
-                        if Sound.soundMode:
-                            Sound.btnClick.play()
-                        return BasicTower(tower)
+                    for i in range(len(btns)):
+                        if btns[i].is_hovered(m_pos):
+                            if Sound.soundMode:
+                                Sound.btnClick.play()
+                            return towers[i](tower)
 
-                    elif fireBtn.is_hovered(m_pos):
-                        if Sound.soundMode:
-                            Sound.btnClick.play()
-
-                        return FireTower(tower)
-
-                    elif iceBtn.is_hovered(m_pos):
-                        if Sound.soundMode:
-                            Sound.btnClick.play()
-                        return IceTower(tower)
-
-                    elif darkBtn.is_hovered(m_pos):
-                        if Sound.soundMode:
-                            Sound.btnClick.play()
-
-                        return DarkTower(tower)
-
-                    elif poisonBtn.is_hovered(m_pos):
-                        if Sound.soundMode:
-                            Sound.btnClick.play()
-
-                        return PoisonTower(tower)
-
-                    else:
-                        return None
+                    return None
 
             pygame.display.update()
 
@@ -178,6 +137,7 @@ class GameObject:
                                                               tower.SIZE * 5, tower.SIZE * 5), 2)
                 tmp = tower
                 del tower
+
                 newTower = self.__choose_tower(tmp)
                 if newTower is None:
                     return None
@@ -206,7 +166,3 @@ class GameObject:
             tower.build(self.__screen)
 
 
-
-
-
-GmObj = GameObject()

@@ -1,5 +1,5 @@
 import pygame
-from src.gm_obj import GmObj
+from src.gm_obj import GameObject
 from src.controllers import MenuObject
 from helper_modules.sound import Sound
 # from pygame.locals import *
@@ -7,8 +7,9 @@ from helper_modules.sound import Sound
 
 def main():
     pygame.init()
-    Menu = MenuObject(GmObj.get_screen)
+    GmObj = GameObject()
     GmObj.set_up_game()
+    Menu = MenuObject(GmObj.get_screen)
     Menu.show_menu()
     GmObj.is_exit = Menu.get_is_exit
     if GmObj.is_exit:

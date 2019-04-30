@@ -279,7 +279,6 @@ class DarkTower(Tower):
         self._Particle.draw(screen)
 
 
-
 class PoisonTower(Tower):
     SPEED = 15  # less is faster
 
@@ -310,3 +309,6 @@ class PoisonTower(Tower):
             Sound.poisonTwShot.play()
         near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
         self._Particle.draw(screen)
+
+
+towers = (BasicTower, FireTower, IceTower, DarkTower, PoisonTower)
