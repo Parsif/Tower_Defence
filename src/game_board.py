@@ -1,15 +1,14 @@
 from collections import deque
 from copy import deepcopy
+
 from helper_modules import board_matrix
 from src.cell import Cell, Tower, Castle
-
 
 
 class GameBoard:
     """
        Docstring
     """
-    BOARD_CELLS = board_matrix.BOARD_CELLS
 
     def __init__(self):
         self.__cells = []
@@ -17,6 +16,8 @@ class GameBoard:
         self.__end = {'x': 0, 'y': 0}
         self.__Castle = None
         self.__towers = []
+        self.BM = board_matrix.BoardTypes()
+        self.BOARD_CELLS = self.BM.get_board()
         self.__parse_board()
 
     @property

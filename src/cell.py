@@ -65,7 +65,10 @@ class Cell:
 class Castle(Cell):
     def __init__(self, cell_type, coord):
         Cell.__init__(self, cell_type, coord)
-        self.__HP = 100
+        self.__HP = 10
+
+    def set_hp(self, hp):
+        self.__HP = hp
 
     @property
     def get_hp(self):
@@ -92,7 +95,6 @@ class Tower(Cell):
     def draw(self, screen):
         coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
         pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
 
     def set_color(self, color=(255, 100, 100)):
         self._color = color
@@ -196,7 +198,7 @@ class BasicTower(Tower):
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.basicTw1
-        self.__DAMAGE = 20
+        self._DAMAGE = 20
         self.__fireCnt = self.SPEED
 
     @property
@@ -234,7 +236,7 @@ class BasicTower(Tower):
 
         if Sound.soundMode:
             Sound.basicTwShot.play()
-        near_mob.take_damage(self.__DAMAGE)
+        near_mob.take_damage(self._DAMAGE)
         self._Particle.draw(screen)
 
 
@@ -245,11 +247,11 @@ class FireTower(Tower):
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.fireTw1
-        self.__DAMAGE = 15
+        self._DAMAGE = 15
         self.__fireCnt = self.SPEED
-        self.__FIRE_DAMAGE = 5
-        self.__FIRE_LAST_FOR = 30
-        self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE, 'last': self.__FIRE_LAST_FOR}
+        self._FIRE_DAMAGE = 20
+        self._FIRE_LAST_FOR = 30
+        self._EFFECT = {'type': 'fire', 'damage': self._FIRE_DAMAGE, 'last': self._FIRE_LAST_FOR}
 
     @property
     def get_cost(self):
@@ -286,7 +288,7 @@ class FireTower(Tower):
 
         if Sound.soundMode:
             Sound.fireTwShot.play()
-        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        near_mob.take_damage(self._DAMAGE, self._EFFECT)
         self._Particle.draw(screen)
 
 
@@ -297,11 +299,11 @@ class IceTower(Tower):
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.iceTw1
-        self.__DAMAGE = 20
+        self._DAMAGE = 20
         self.__fireCnt = self.SPEED
-        self.__SLOW = 7
-        self.__SLOW_LAST_FOR = 25
-        self.__EFFECT = {'type': 'ice', 'slow': self.__SLOW, 'last': self.__SLOW_LAST_FOR}
+        self._SLOW = 7
+        self._SLOW_LAST_FOR = 25
+        self._EFFECT = {'type': 'ice', 'slow': self._SLOW, 'last': self._SLOW_LAST_FOR}
 
     @property
     def get_cost(self):
@@ -338,7 +340,7 @@ class IceTower(Tower):
 
         if Sound.soundMode:
             Sound.iceTwShot.play()
-        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        near_mob.take_damage(self._DAMAGE, self._EFFECT)
         self._Particle.draw(screen)
 
 
@@ -399,10 +401,10 @@ class PoisonTower(Tower):
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.poisonTw1
-        self.__DAMAGE = 20
+        self._DAMAGE = 20
         self.__fireCnt = self.SPEED
-        self.__POISON_DAMAGE = 7
-        self.__EFFECT = {'type': 'poison', 'poison': self.__POISON_DAMAGE}
+        self._POISON_DAMAGE = 7
+        self.__EFFECT = {'type': 'poison', 'poison': self._POISON_DAMAGE}
 
     @property
     def get_cost(self):
@@ -439,7 +441,7 @@ class PoisonTower(Tower):
 
         if Sound.soundMode:
             Sound.poisonTwShot.play()
-        near_mob.take_damage(self.__DAMAGE, self.__EFFECT)
+        near_mob.take_damage(self._DAMAGE, self.__EFFECT)
         self._Particle.draw(screen)
 
 
@@ -450,7 +452,7 @@ class BasicTower2(BasicTower):
     def __init__(self, tower):
         BasicTower.__init__(self, tower)
         self._image = tower_img.basicTw2
-        self.__DAMAGE = 40
+        self._DAMAGE = 40
 
 
 class FireTower2(FireTower):
@@ -460,7 +462,8 @@ class FireTower2(FireTower):
     def __init__(self, tower):
         FireTower.__init__(self, tower)
         self._image = tower_img.fireTw2
-        self.__FIRE_DAMAGE = 10
+        self._DAMAGE = 100
+        self._FIRE_DAMAGE = 0
 
 
 class IceTower2(IceTower):
@@ -470,8 +473,8 @@ class IceTower2(IceTower):
     def __init__(self, tower):
         IceTower.__init__(self, tower)
         self._image = tower_img.iceTw2
-        self.__DAMAGE = 50
-        self.__SLOW = 7
+        self._DAMAGE = 50
+        self._SLOW = 7
 
 
 class DarkTower2(DarkTower):
@@ -491,8 +494,8 @@ class PoisonTower2(PoisonTower):
     def __init__(self, tower):
         PoisonTower.__init__(self, tower)
         self._image = tower_img.poisonTw2
-        self.__DAMAGE = 30
-        self.__POISON_DAMAGE = 15
+        self._DAMAGE = 30
+        self._POISON_DAMAGE = 15
 
 
 tw_lvl1 = (BasicTower, FireTower, IceTower, DarkTower, PoisonTower)

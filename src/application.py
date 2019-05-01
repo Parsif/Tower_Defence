@@ -5,20 +5,20 @@ from src.controllers import MenuObject
 from src.game_object import GameObject
 
 
-# from pygame.locals import *
-
-
 def main():
     pygame.init()
-    GmObj = GameObject()
-    GmObj.set_up_game()
-    Menu = MenuObject(GmObj.get_screen)
+    screen = pygame.display.set_mode((1000, 800))
+    GameObject.set_up_game()
+    Menu = MenuObject(screen)
     Menu.show_menu()
+    if Menu.get_is_exit:
+        return None
+    GmObj = GameObject(screen)
+
     GmObj.is_exit = Menu.get_is_exit
     if GmObj.is_exit:
         return None
 
-    # all_obj = pygame.sprite.Group()
     clock = pygame.time.Clock()
     is_running = True
     i = 0
@@ -30,7 +30,25 @@ def main():
         clock.tick(25)
         GmObj.draw_board()
         GmObj.draw_pause_btn()
-        GmObj.show_cst_hp()
+        tmp = GmObj.show_cst_hp()
+        if tmp is None:
+            if Sound.soundMode and GmObj.is_music_played:
+                pygame.mixer.music.unpause()
+            elif Sound.soundMode:
+                GmObj.play_music()
+
+        elif tmp:
+            GmObj.restart()
+            Menu.show_menu()
+            GmObj = GameObject(screen)
+            if Menu.get_is_exit:
+                break
+            if Sound.soundMode:
+                GmObj.play_music()
+            continue
+        else:
+            break
+
         GmObj.show_player_coins()
         GmObj.draw_mobs()
         GmObj.draw_dead_mb()
@@ -48,8 +66,8 @@ def main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 m_pos = pygame.mouse.get_pos()
-                GmObj.tower_click(m_pos)
                 GmObj.is_exit = GmObj.pause_btn_click(m_pos)
+                GmObj.tower_click(m_pos)
 
             if event.type == pygame.MOUSEMOTION:
                 m_pos = pygame.mouse.get_pos()

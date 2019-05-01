@@ -1,3 +1,4 @@
+from copy import deepcopy
 from random import randint
 
 import pygame
@@ -6,6 +7,7 @@ from helper_modules.sound import Sound
 from src import mobs
 from src.cell import tw_lvl1, tw_lvl2, Tower
 from src.controllers import Button
+from src.controllers import DefeatMenu
 from src.controllers import PauseMenu
 from src.game_board import GameBoard
 from src.player import Player
@@ -15,14 +17,15 @@ class GameObject:
     """
         Docstring
     """
-    def __init__(self):
+
+    def __init__(self, screen):
         self.__Player = Player()
         self.is_exit = None
         self.__txtFont = pygame.font.SysFont('impact', 20)
-        self.__screen = pygame.display.set_mode((1000, 800))
+        self.__screen = screen
         self.__GB = GameBoard()
         self.__Castle = self.__GB.get_castle
-        self.__towers = self.__GB.get_towers  # just placeholders for tower
+        self.__towers = deepcopy(self.__GB.get_towers)  # just placeholders for tower
         self.__start = self.__GB.get_start
         self.__path = []
         for st in self.__start:
@@ -35,6 +38,7 @@ class GameObject:
 
         self.__fire_towers = []  # tower which can fire
         self.__dead_mobs = []
+        self.is_music_played = False
 
     @staticmethod
     def set_up_game():
@@ -75,12 +79,25 @@ class GameObject:
         index = randint(0, len(self.__start) - 1)  # portal number
         self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
 
-    @staticmethod
-    def play_music():
+    def play_music(self):
         pygame.mixer.music.play(-1)
+        self.is_music_played = True
+
+    def restart(self):
+        self.mobs.clear()
+        self.__towers = deepcopy(self.__GB.get_towers)
+        self.__fire_towers.clear()
+        self.__dead_mobs.clear()
+        self.__Castle.set_hp(20)
+        self.__Player.set_coins_default()
 
     def show_cst_hp(self):
         hp = self.__Castle.get_hp
+        if hp <= 0:
+            pygame.mixer.music.pause()
+            DF = DefeatMenu(self.__screen)
+            return DF.show_menu()
+
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
 
     def show_player_coins(self):

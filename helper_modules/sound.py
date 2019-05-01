@@ -6,7 +6,7 @@ pygame.init()
 
 
 class Sound:
-    soundMode = None
+    soundMode = True
     num = randint(1, 5)
     if num == 1:
         bgMusic1 = pygame.mixer.music.load(r'sound/background_music/main_music.wav')
