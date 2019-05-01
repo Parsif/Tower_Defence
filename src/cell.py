@@ -85,7 +85,7 @@ class Tower(Cell):
         self._shotCnt = 0
         self._shotDx = 0
         self._shotDy = 0
-        self._SHOT_STEPS = 6  # number of particle positions
+        self._SHOT_STEPS = 3  # number of particle positions
         self._Particle = Particle(self._coord['x'] * self.SIZE + self.SIZE // 2,
                                   self._coord['y'] * self.SIZE + self.SIZE // 3)
 
@@ -191,13 +191,17 @@ class Tower(Cell):
 
 class BasicTower(Tower):
     SPEED = 10  # less is faster
+    COST = 25
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.basicTw1
         self.__DAMAGE = 20
-        self.__COST = 100
         self.__fireCnt = self.SPEED
+
+    @property
+    def get_cost(self):
+        return self.COST
 
     def draw(self, screen):
         super().draw(screen)
@@ -236,17 +240,20 @@ class BasicTower(Tower):
 
 class FireTower(Tower):
     SPEED = 15  # less is faster
+    COST = 50
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.fireTw1
         self.__DAMAGE = 15
-        self.__COST = 100
         self.__fireCnt = self.SPEED
         self.__FIRE_DAMAGE = 5
-        self.__FIRE_LAST_FOR = 15
+        self.__FIRE_LAST_FOR = 30
         self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE, 'last': self.__FIRE_LAST_FOR}
 
+    @property
+    def get_cost(self):
+        return self.COST
 
     def draw(self, screen):
         super().draw(screen)
@@ -285,16 +292,21 @@ class FireTower(Tower):
 
 class IceTower(Tower):
     SPEED = 15  # less is faster
+    COST = 75
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.iceTw1
         self.__DAMAGE = 20
-        self.__COST = 100
         self.__fireCnt = self.SPEED
         self.__SLOW = 7
-        self.__SLOW_LAST_FOR = 10
+        self.__SLOW_LAST_FOR = 25
         self.__EFFECT = {'type': 'ice', 'slow': self.__SLOW, 'last': self.__SLOW_LAST_FOR}
+
+    @property
+    def get_cost(self):
+        return self.COST
+
 
     def draw(self, screen):
         super().draw(screen)
@@ -332,16 +344,20 @@ class IceTower(Tower):
 
 class DarkTower(Tower):
     SPEED = 10  # less is faster
+    COST = 100
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.darkTw1
         self._DAMAGE = 50
-        self._COST = 100
         self.__fireCnt = self.SPEED
         self._FIRE_DAMAGE = 5
 
     # self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
+
+    @property
+    def get_cost(self):
+        return self.COST
 
     def draw(self, screen):
         super().draw(screen)
@@ -378,15 +394,19 @@ class DarkTower(Tower):
 
 class PoisonTower(Tower):
     SPEED = 15  # less is faster
+    COST = 125
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.poisonTw1
         self.__DAMAGE = 20
-        self.__COST = 100
         self.__fireCnt = self.SPEED
         self.__POISON_DAMAGE = 7
         self.__EFFECT = {'type': 'poison', 'poison': self.__POISON_DAMAGE}
+
+    @property
+    def get_cost(self):
+        return self.COST
 
     def draw(self, screen):
         super().draw(screen)
@@ -425,38 +445,38 @@ class PoisonTower(Tower):
 
 class BasicTower2(BasicTower):
     SPEED = 10  # less is faster
+    COST = BasicTower.COST * 2
 
     def __init__(self, tower):
         BasicTower.__init__(self, tower)
         self._image = tower_img.basicTw2
         self.__DAMAGE = 40
-        self.__COST = 100
 
 
 class FireTower2(FireTower):
     SPEED = 15  # less is faster
+    COST = FireTower.COST * 2
 
     def __init__(self, tower):
         FireTower.__init__(self, tower)
         self._image = tower_img.fireTw2
-        self.__DAMAGE = 30
-        self.__COST = 100
         self.__FIRE_DAMAGE = 10
 
 
 class IceTower2(IceTower):
     SPEED = 15  # less is faster
+    COST = IceTower.COST * 2
 
     def __init__(self, tower):
         IceTower.__init__(self, tower)
         self._image = tower_img.iceTw2
         self.__DAMAGE = 50
-        self.__COST = 100
         self.__SLOW = 7
 
 
 class DarkTower2(DarkTower):
     SPEED = 20
+    COST = DarkTower.COST * 2
 
     def __init__(self, tower):
         DarkTower.__init__(self, tower)
@@ -466,12 +486,12 @@ class DarkTower2(DarkTower):
 
 class PoisonTower2(PoisonTower):
     SPEED = 15  # less is faster
+    COST = PoisonTower.COST * 2
 
     def __init__(self, tower):
         PoisonTower.__init__(self, tower)
         self._image = tower_img.poisonTw2
         self.__DAMAGE = 30
-        self.__COST = 100
         self.__POISON_DAMAGE = 15
 
 

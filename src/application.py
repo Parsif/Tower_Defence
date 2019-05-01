@@ -2,7 +2,7 @@ import pygame
 
 from helper_modules.sound import Sound
 from src.controllers import MenuObject
-from src.gm_obj import GameObject
+from src.game_object import GameObject
 
 
 # from pygame.locals import *
@@ -20,7 +20,6 @@ def main():
 
     # all_obj = pygame.sprite.Group()
     clock = pygame.time.Clock()
-    Sound.soundMode = Menu.get_sound_mod
     is_running = True
     i = 0
     if Sound.soundMode:
@@ -28,11 +27,13 @@ def main():
 
     GmObj.spawn_mob()
     while is_running:
-        clock.tick(20)
+        clock.tick(25)
         GmObj.draw_board()
+        GmObj.draw_pause_btn()
+        GmObj.show_cst_hp()
+        GmObj.show_player_coins()
         GmObj.draw_mobs()
         GmObj.draw_dead_mb()
-        GmObj.show_cst_hp()
         GmObj.tw_fire()
         GmObj.show_shot()
 
@@ -48,10 +49,12 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 m_pos = pygame.mouse.get_pos()
                 GmObj.tower_click(m_pos)
+                GmObj.is_exit = GmObj.pause_btn_click(m_pos)
 
             if event.type == pygame.MOUSEMOTION:
                 m_pos = pygame.mouse.get_pos()
                 GmObj.towers_hover(m_pos)
+                GmObj.pause_btn_hovered(m_pos)
 
         if GmObj.is_exit:
             break

@@ -3,10 +3,12 @@ from random import randint
 import pygame
 
 from helper_modules.sound import Sound
-from src import mob_module
+from src import mobs
 from src.cell import tw_lvl1, tw_lvl2, Tower
 from src.controllers import Button
+from src.controllers import PauseMenu
 from src.game_board import GameBoard
+from src.player import Player
 
 
 class GameObject:
@@ -14,6 +16,7 @@ class GameObject:
         Docstring
     """
     def __init__(self):
+        self.__Player = Player()
         self.is_exit = None
         self.__txtFont = pygame.font.SysFont('impact', 20)
         self.__screen = pygame.display.set_mode((1000, 800))
@@ -27,6 +30,9 @@ class GameObject:
         self.mobs = []
 
         self.__hpBtn = Button(125, 50, 865, 10)
+        self.__pauseBtn = Button(60, 60, 0, 0)
+        self.__coinsBtn = Button(125, 50, 865, 65)
+
         self.__fire_towers = []  # tower which can fire
         self.__dead_mobs = []
 
@@ -55,6 +61,7 @@ class GameObject:
         for mob in self.mobs:
             if mob.get_hp < 0:
                 self.mobs.pop(i)
+                self.__Player.increase_coins(mob.get_cost)
                 self.__dead_mobs.append(mob)
 
             if mob.is_end_reached:
@@ -65,8 +72,8 @@ class GameObject:
                 mob.update()
 
     def spawn_mob(self):
-        index = randint(0, len(self.__start) - 1)
-        self.mobs.append(mob_module.Spider(self.__start[index], self.__path[index]))
+        index = randint(0, len(self.__start) - 1)  # portal number
+        self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
 
     @staticmethod
     def play_music():
@@ -76,18 +83,24 @@ class GameObject:
         hp = self.__Castle.get_hp
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
 
+    def show_player_coins(self):
+        self.__coinsBtn.draw(self.__screen, 20, f'Coins: {self.__Player.get_coins}')
+
+    def draw_pause_btn(self):
+        self.__pauseBtn.draw(self.__screen, 16, 'Pause')
+
     def __change_tw_state(self, tower, upgrade=None):
         coord = tower.get_coord
         upgradeBtn = None
         if upgrade is not None:
-            upgradeBtn = Button(60, 25, coord['x'] * tower.SIZE + 23, coord['y'] * tower.SIZE - 30, (255, 255, 0))
-        sellBtn = Button(60, 25, coord['x'] * tower.SIZE - 39, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+            upgradeBtn = Button(75, 25, coord['x'] * tower.SIZE + 23, coord['y'] * tower.SIZE - 30, (255, 255, 0))
+        sellBtn = Button(75, 25, coord['x'] * tower.SIZE - 55, coord['y'] * tower.SIZE - 30, (255, 255, 0))
 
         while True:
             if upgradeBtn is not None:
-                upgradeBtn.draw(self.__screen, 13, 'Upgrade')
+                upgradeBtn.draw(self.__screen, 13, f'Upgrade: {upgrade.COST}')
 
-            sellBtn.draw(self.__screen, 13, 'Sell')
+            sellBtn.draw(self.__screen, 13, f'Sell: {tower.COST // 2}')
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.is_exit = True
@@ -116,12 +129,15 @@ class GameObject:
                         del self.__fire_towers[tmp_index]
 
                         self.__towers.append(Tower(2, {'x': coord['x'], 'y': coord['y']}))
+                        self.__Player.increase_coins(tower.COST // 2)
                         if Sound.soundMode:
                             Sound.towerSell.play()
 
                     if upgrade is not None:
                         if upgradeBtn.is_hovered(m_pos):
-                            return upgrade(tower)
+                            if self.__Player.get_coins - upgrade.COST >= 0:
+                                self.__Player.decrease_coins(upgrade.COST)
+                                return upgrade(tower)
 
                     return None
 
@@ -160,9 +176,11 @@ class GameObject:
                     m_pos = pygame.mouse.get_pos()
                     for i in range(len(btns)):
                         if btns[i].is_hovered(m_pos):
-                            if Sound.soundMode:
-                                Sound.btnClick.play()
-                            return tw_lvl1[i](tower)
+                            if self.__Player.get_coins - tw_lvl1[i].COST >= 0:
+                                self.__Player.decrease_coins(tw_lvl1[i].COST)
+                                if Sound.soundMode:
+                                    Sound.btnClick.play()
+                                return tw_lvl1[i](tower)
 
                     tower.set_color()
                     return None
@@ -236,3 +254,20 @@ class GameObject:
         for tower in self.__fire_towers:
             if tower.get_shot_cnt != 0:
                 tower.show_shot(self.__screen)
+
+    def pause_btn_hovered(self, m_pos):
+        if self.__pauseBtn.is_hovered(m_pos):
+            self.__pauseBtn.set_color((255, 0, 0))
+        else:
+            self.__pauseBtn.set_color()
+
+    def pause_btn_click(self, m_pos):
+        if self.__pauseBtn.is_hovered(m_pos):
+            pygame.mixer.music.pause()
+            pm = PauseMenu(self.__screen)
+            pm.show_menu()
+            if Sound.soundMode:
+                pygame.mixer.music.unpause()
+            return pm.get_is_exit
+
+        return False

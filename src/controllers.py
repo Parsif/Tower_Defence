@@ -1,4 +1,5 @@
 import pygame
+
 import helper_modules.game_dsp as GD
 from helper_modules.sound import Sound
 
@@ -43,88 +44,139 @@ class MenuObject:
     """
 
     def __init__(self, screen):
-        self.__bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
-        self.__screen = screen
+        self._bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
+        self._screen = screen
         self.__headerFont = pygame.font.SysFont('impact', 80)
         self.__font = pygame.font.SysFont('impact', 24)
         self.__txtColor = (0, 0, 0)
-        self.__is__exit = False
-        self.__playBtn = Button(200, 75, 200, 525)
-        self.__exitBtn = Button(200, 75, 200, 625)
-        self.__soundBtn = Button(200, 75, 500, 525)
+        self._is__exit = False
+        self._playBtn = Button(200, 75, 200, 525)
+        self._exitBtn = Button(200, 75, 200, 625)
+        self._soundBtn = Button(200, 75, 500, 525)
         self.__soundMod = True
 
     @property
     def get_is_exit(self):
-        return self.__is__exit
-
-    @property
-    def get_sound_mod(self):
-        return self.__soundMod
+        return self._is__exit
 
     def __show_text(self):
         header = self.__headerFont.render('Tower Defence!', 1, self.__txtColor)
-        self.__screen.blit(header, (self.__screen.get_width() / 4, 75))
+        self._screen.blit(header, (self._screen.get_width() / 4, 75))
 
         marginTop = 175
         for txt_row in GD.desc:
             dsp = self.__font.render(txt_row, 1, self.__txtColor)
-            self.__screen.blit(dsp, (self.__screen.get_width() / 5, marginTop))
+            self._screen.blit(dsp, (self._screen.get_width() / 5, marginTop))
             marginTop += 50
 
-    def __btns_hovered(self, m_pos):
-        if self.__exitBtn.is_hovered(m_pos):
-            self.__exitBtn.set_color((255, 0, 0))
+    def _btns_hovered(self, m_pos):
+        if self._exitBtn.is_hovered(m_pos):
+            self._exitBtn.set_color((255, 0, 0))
         else:
-            self.__exitBtn.set_color((100, 100, 0))
+            self._exitBtn.set_color((100, 100, 0))
 
-        if self.__playBtn.is_hovered(m_pos):
-            self.__playBtn.set_color((0, 255, 0))
+        if self._playBtn.is_hovered(m_pos):
+            self._playBtn.set_color((0, 255, 0))
         else:
-            self.__playBtn.set_color((100, 100, 0))
+            self._playBtn.set_color((100, 100, 0))
 
-        if self.__soundBtn.is_hovered(m_pos):
-            self.__soundBtn.set_color((50, 50, 200))
+        if self._soundBtn.is_hovered(m_pos):
+            self._soundBtn.set_color((50, 50, 200))
         else:
-            self.__soundBtn.set_color((100, 100, 0))
+            self._soundBtn.set_color((100, 100, 0))
 
     def show_menu(self):
         is_running = True
-        while is_running and not self.__is__exit:
+        while is_running and not self._is__exit:
+            Sound.soundMode = self.__soundMod
             if self.__soundMod:
                 sound_str = 'on'
             else:
                 sound_str = 'off'
-            self.__screen.blit(self.__bgImage, (0, 0))
+            self._screen.blit(self._bgImage, (0, 0))
             self.__show_text()
-            self.__exitBtn.draw(self.__screen, 40, 'Exit')
-            self.__playBtn.draw(self.__screen, 40, 'Play')
-            self.__soundBtn.draw(self.__screen, 40, f'Sound {sound_str}')
+            self._exitBtn.draw(self._screen, 40, 'Exit')
+            self._playBtn.draw(self._screen, 40, 'Play')
+            self._soundBtn.draw(self._screen, 40, f'Sound {sound_str}')
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     m_pos = pygame.mouse.get_pos()
-                    if self.__exitBtn.is_hovered(m_pos):
+                    if self._exitBtn.is_hovered(m_pos):
                         Sound.btnClick.play()
-                        self.__is__exit = True
+                        self._is__exit = True
                         break
 
-                    elif self.__playBtn.is_hovered(m_pos):
+                    elif self._playBtn.is_hovered(m_pos):
                         Sound.btnClick.play()
                         is_running = False
                         break
 
-                    elif self.__soundBtn.is_hovered(m_pos):
+                    elif self._soundBtn.is_hovered(m_pos):
                         Sound.btnClick.play()
                         self.__soundMod = not self.__soundMod
 
                 if event.type == pygame.QUIT:
-                    self.__is__exit = True
+                    self._is__exit = True
                     is_running = False
                     break
 
                 if event.type == pygame.MOUSEMOTION:
                     m_pos = pygame.mouse.get_pos()
-                    self.__btns_hovered(m_pos)
+                    self._btns_hovered(m_pos)
+
+            pygame.display.update()
+
+
+class PauseMenu(MenuObject):
+    """
+         Docstring
+     """
+
+    def __init__(self, screen):
+        MenuObject.__init__(self, screen)
+        self._playBtn = Button(200, 75, self._screen.get_width() / 2 - 100, 175)
+        self._exitBtn = Button(200, 75, self._screen.get_width() / 2 - 100, 325)
+        self._soundBtn = Button(200, 75, self._screen.get_width() / 2 - 100, 475)
+
+    def show_menu(self):
+        is_running = True
+        while is_running and not self._is__exit:
+            if Sound.soundMode:
+                sound_str = 'on'
+            else:
+                sound_str = 'off'
+            self._screen.blit(self._bgImage, (0, 0))
+            self._exitBtn.draw(self._screen, 40, 'Exit')
+            self._playBtn.draw(self._screen, 40, 'Resume')
+            self._soundBtn.draw(self._screen, 40, f'Sound {sound_str}')
+
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    m_pos = pygame.mouse.get_pos()
+                    if self._exitBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
+                        self._is__exit = True
+                        break
+
+                    elif self._playBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
+                        is_running = False
+                        break
+
+                    elif self._soundBtn.is_hovered(m_pos):
+                        Sound.btnClick.play()
+                        print(Sound.soundMode)
+                        Sound.soundMode = not Sound.soundMode
+                        print(Sound.soundMode)
+
+                if event.type == pygame.QUIT:
+                    self._is__exit = True
+                    is_running = False
+                    break
+
+                if event.type == pygame.MOUSEMOTION:
+                    m_pos = pygame.mouse.get_pos()
+                    self._btns_hovered(m_pos)
 
             pygame.display.update()

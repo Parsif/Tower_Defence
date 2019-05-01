@@ -20,6 +20,11 @@ class Sound:
         bgMusic5 = pygame.mixer.music.load(r'sound/background_music/Amazing_Plan_Silent_Film_Dark.mp3')
 
     spider_death = pygame.mixer.Sound(r'sound/mob_death/SpiderDeath.wav')
+    orc_death = pygame.mixer.Sound(r'sound/mob_death/OrcDeath.wav')
+    lizard_death = pygame.mixer.Sound(r'sound/mob_death/LizardDeath.wav')
+    dragon_death = pygame.mixer.Sound(r'sound/mob_death/DragonDeath.wav')
+    turtle_death = pygame.mixer.Sound(r'sound/mob_death/TurtleDeath.wav')
+    wolf_death = pygame.mixer.Sound(r'sound/mob_death/WolfDeath.wav')
 
     btnClick = pygame.mixer.Sound(r'sound/sound_effects/button_click.wav')
     towerConstruct = pygame.mixer.Sound(r'sound/sound_effects/TowerConstruct.wav')
