@@ -21,7 +21,8 @@ def main():
 
     clock = pygame.time.Clock()
     is_running = True
-    i = 0
+    spawnCnt = 0
+    SPAWN_RATE = 20
     if Sound.soundMode:
         GmObj.play_music()
 
@@ -55,9 +56,26 @@ def main():
         GmObj.tw_fire()
         GmObj.show_shot()
 
-        if i == 15:
-            GmObj.spawn_mob()
-            i = 0
+        if spawnCnt == SPAWN_RATE:
+            tmp = GmObj.spawn_mob()
+            if tmp is None:
+                if Sound.soundMode and GmObj.is_music_played:
+                    pygame.mixer.music.unpause()
+                elif Sound.soundMode:
+                    GmObj.play_music()
+
+            elif tmp:
+                GmObj.restart()
+                Menu.show_menu()
+                GmObj = GameObject(screen)
+                if Menu.get_is_exit:
+                    break
+                if Sound.soundMode:
+                    GmObj.play_music()
+                continue
+            else:
+                break
+            spawnCnt = 0
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -74,12 +92,13 @@ def main():
                 GmObj.towers_hover(m_pos)
                 GmObj.pause_btn_hovered(m_pos)
 
+
         if GmObj.is_exit:
             break
         GmObj.build_towers()
         pygame.display.update()
         GmObj.update_mobs()
-        i += 1
+        spawnCnt += 1
 
     pygame.quit()
 

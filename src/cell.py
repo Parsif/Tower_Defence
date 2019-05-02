@@ -65,7 +65,7 @@ class Cell:
 class Castle(Cell):
     def __init__(self, cell_type, coord):
         Cell.__init__(self, cell_type, coord)
-        self.__HP = 10
+        self.__HP = 30
 
     def set_hp(self, hp):
         self.__HP = hp
@@ -345,13 +345,13 @@ class IceTower(Tower):
 
 
 class DarkTower(Tower):
-    SPEED = 10  # less is faster
+    SPEED = 35  # less is faster
     COST = 100
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.darkTw1
-        self._DAMAGE = 50
+        self._DAMAGE = 100
         self.__fireCnt = self.SPEED
         self._FIRE_DAMAGE = 5
 
@@ -395,13 +395,13 @@ class DarkTower(Tower):
 
 
 class PoisonTower(Tower):
-    SPEED = 15  # less is faster
+    SPEED = 10  # less is faster
     COST = 125
 
     def __init__(self, tower):
         Tower.__init__(self, tower._cellType, tower._coord)
         self._image = tower_img.poisonTw1
-        self._DAMAGE = 20
+        self._DAMAGE = 30
         self.__fireCnt = self.SPEED
         self._POISON_DAMAGE = 7
         self.__EFFECT = {'type': 'poison', 'poison': self._POISON_DAMAGE}
@@ -462,39 +462,39 @@ class FireTower2(FireTower):
     def __init__(self, tower):
         FireTower.__init__(self, tower)
         self._image = tower_img.fireTw2
-        self._DAMAGE = 100
-        self._FIRE_DAMAGE = 0
+        self._DAMAGE = 20
+        self._FIRE_DAMAGE = 30
 
 
 class IceTower2(IceTower):
-    SPEED = 15  # less is faster
+    SPEED = 13  # less is faster
     COST = IceTower.COST * 2
 
     def __init__(self, tower):
         IceTower.__init__(self, tower)
         self._image = tower_img.iceTw2
-        self._DAMAGE = 50
-        self._SLOW = 7
+        self._DAMAGE = 25
+        self._SLOW = 15
 
 
 class DarkTower2(DarkTower):
-    SPEED = 20
+    SPEED = 35
     COST = DarkTower.COST * 2
 
     def __init__(self, tower):
         DarkTower.__init__(self, tower)
         self._image = tower_img.darkTw2
-        self._DAMAGE = 100
+        self._DAMAGE = 200
 
 
 class PoisonTower2(PoisonTower):
-    SPEED = 15  # less is faster
+    SPEED = 10  # less is faster
     COST = PoisonTower.COST * 2
 
     def __init__(self, tower):
         PoisonTower.__init__(self, tower)
         self._image = tower_img.poisonTw2
-        self._DAMAGE = 30
+        self._DAMAGE = 60
         self._POISON_DAMAGE = 15
 
 

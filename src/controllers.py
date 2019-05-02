@@ -151,9 +151,9 @@ class MenuObject:
     def __init__(self, screen):
         self._bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
         self._screen = screen
-        self.__headerFont = pygame.font.SysFont('impact', 80)
+        self._headerFont = pygame.font.SysFont('impact', 80)
         self.__font = pygame.font.SysFont('impact', 24)
-        self.__txtColor = (0, 0, 0)
+        self._txtColor = (0, 0, 0)
         self._is__exit = False
         self.__backToMenu = Button(200, 75, 200, 525)
         self.__exitBtn = Button(200, 75, 200, 625)
@@ -164,12 +164,12 @@ class MenuObject:
         return self._is__exit
 
     def __show_text(self):
-        header = self.__headerFont.render('Tower Defence!', 1, self.__txtColor)
+        header = self._headerFont.render('Tower Defence!', 1, self._txtColor)
         self._screen.blit(header, (self._screen.get_width() / 4, 75))
 
         marginTop = 175
         for txt_row in GD.desc:
-            dsp = self.__font.render(txt_row, 1, self.__txtColor)
+            dsp = self.__font.render(txt_row, 1, self._txtColor)
             self._screen.blit(dsp, (self._screen.get_width() / 5, marginTop))
             marginTop += 50
 
@@ -300,16 +300,18 @@ class PauseMenu(MenuObject):
             pygame.display.update()
 
 
-class DefeatMenu(MenuObject):
+class EndGameMenu(MenuObject):
     """
         Docstring
     """
 
-    def __init__(self, screen):
+    def __init__(self, screen, bg_image, text):
         MenuObject.__init__(self, screen)
-        self._bgImage = pygame.image.load(r'images/menu/defeat_menu_background.jpg')
-        self.__backToMenu = Button(200, 75, self._screen.get_width() / 2 - 100, 175)
-        self.__exitBtn = Button(200, 75, self._screen.get_width() / 2 - 100, 325)
+        self._bgImage = bg_image
+        self.text = text
+        self._txtColor = (255, 255, 255)
+        self.__backToMenu = Button(200, 75, 100, 700)
+        self.__exitBtn = Button(200, 75, 700, 700)
 
     def show_menu(self):
         is_running = True
@@ -318,6 +320,9 @@ class DefeatMenu(MenuObject):
             self._screen.blit(self._bgImage, (0, 0))
             self.__exitBtn.draw(self._screen, 40, 'Exit')
             self.__backToMenu.draw(self._screen, 40, 'Menu')
+
+            header = self._headerFont.render(self.text, 1, self._txtColor)
+            self._screen.blit(header, (self._screen.get_width() / 2.5, 75))
 
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:

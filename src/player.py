@@ -1,6 +1,6 @@
 class Player:
     def __init__(self):
-        self.__coins = 500
+        self.__coins = 100
 
     @property
     def get_coins(self):

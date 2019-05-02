@@ -7,7 +7,7 @@ from helper_modules.sound import Sound
 from src import mobs
 from src.cell import tw_lvl1, tw_lvl2, Tower
 from src.controllers import Button
-from src.controllers import DefeatMenu
+from src.controllers import EndGameMenu
 from src.controllers import PauseMenu
 from src.game_board import GameBoard
 from src.player import Player
@@ -36,9 +36,12 @@ class GameObject:
         self.__pauseBtn = Button(60, 60, 0, 0)
         self.__coinsBtn = Button(125, 50, 865, 65)
 
+
         self.__fire_towers = []  # tower which can fire
         self.__dead_mobs = []
         self.is_music_played = False
+        self.waveCnt = 0
+
 
     @staticmethod
     def set_up_game():
@@ -77,7 +80,23 @@ class GameObject:
 
     def spawn_mob(self):
         index = randint(0, len(self.__start) - 1)  # portal number
-        self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
+        if self.waveCnt < 30:
+            self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
+        elif 30 <= self.waveCnt < 50:
+            pass
+        elif 50 <= self.waveCnt < 70:
+            self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
+            self.mobs.append(mobs.Orc(self.__start[index], self.__path[index]))
+        elif 70 <= self.waveCnt < 90:
+            pass
+        elif 90 <= self.waveCnt < 95:
+            self.mobs.append(mobs.Dragon(self.__start[index], self.__path[index]))
+        elif self.waveCnt > 95 and len(self.mobs) == 0:
+            pygame.mixer.music.pause()
+            DF = EndGameMenu(self.__screen, pygame.image.load(r'images/menu/main_menu_background.png'), 'Victory')
+            return DF.show_menu()
+
+        self.waveCnt += 1
 
     def play_music(self):
         pygame.mixer.music.play(-1)
@@ -91,11 +110,12 @@ class GameObject:
         self.__Castle.set_hp(20)
         self.__Player.set_coins_default()
 
+
     def show_cst_hp(self):
         hp = self.__Castle.get_hp
         if hp <= 0:
             pygame.mixer.music.pause()
-            DF = DefeatMenu(self.__screen)
+            DF = EndGameMenu(self.__screen, pygame.image.load(r'images/menu/defeat_menu_background.jpg'), 'Defeat')
             return DF.show_menu()
 
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')
@@ -170,11 +190,11 @@ class GameObject:
         btns = [basicBtn, fireBtn, iceBtn, darkBtn, poisonBtn]
 
         while True:
-            basicBtn.draw(self.__screen, 13, 'Basic')
-            fireBtn.draw(self.__screen, 13, 'Fire')
-            iceBtn.draw(self.__screen, 13, 'Ice')
-            darkBtn.draw(self.__screen, 13, 'Dark')
-            poisonBtn.draw(self.__screen, 13, 'Poison')
+            basicBtn.draw(self.__screen, 11, f'Basic: {tw_lvl1[0].COST}')
+            fireBtn.draw(self.__screen, 11, f'Fire: {tw_lvl1[1].COST}')
+            iceBtn.draw(self.__screen, 11, f'Ice: {tw_lvl1[2].COST}')
+            darkBtn.draw(self.__screen, 11, f'Dark: {tw_lvl1[3].COST}')
+            poisonBtn.draw(self.__screen, 11, f'Poison: {tw_lvl1[4].COST}')
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

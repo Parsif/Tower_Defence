@@ -119,10 +119,10 @@ class Spider(Mob):
         Mob.__init__(self, start, path)
         self.image = spider_imgs.spider_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
-        self.__hp = 200
+        self.__hp = 130
         self._SPEED = 2
         self._speedCnt = self._SPEED
-        self.__COST = 50
+        self.__COST = 10
 
     @property
     def get_cost(self):
@@ -181,10 +181,10 @@ class Orc(Mob):
         Mob.__init__(self, start, path)
         self.image = orc_imgs.orc_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
-        self.__hp = 200
-        self._SPEED = 4
+        self.__hp = 400
+        self._SPEED = 6
         self._speedCnt = self._SPEED
-        self.__COST = 100
+        self.__COST = 50
 
     @property
     def get_cost(self):
@@ -243,10 +243,10 @@ class Dragon(Mob):
         Mob.__init__(self, start, path)
         self.image = dragon_imgs.dragon_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
-        self.__hp = 200
-        self._SPEED = 6
+        self.__hp = 2000
+        self._SPEED = 7
         self._speedCnt = self._SPEED
-        self.__COST = 200
+        self.__COST = 500
 
     @property
     def get_cost(self):
