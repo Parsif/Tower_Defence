@@ -45,7 +45,7 @@ class GameObject:
 
     @staticmethod
     def set_up_game():
-        logo = pygame.image.load(r'images/logo.png')
+        logo = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/logo.png')
         pygame.display.set_icon(logo)
         pygame.display.set_caption("Tower Defence")
 
@@ -86,14 +86,15 @@ class GameObject:
             pass
         elif 50 <= self.waveCnt < 70:
             self.mobs.append(mobs.Spider(self.__start[index], self.__path[index]))
-            self.mobs.append(mobs.Orc(self.__start[index], self.__path[index]))
+            self.mobs.append(mobs.Turtle(self.__start[index], self.__path[index]))
         elif 70 <= self.waveCnt < 90:
             pass
         elif 90 <= self.waveCnt < 95:
             self.mobs.append(mobs.Dragon(self.__start[index], self.__path[index]))
         elif self.waveCnt > 95 and len(self.mobs) == 0:
             pygame.mixer.music.pause()
-            DF = EndGameMenu(self.__screen, pygame.image.load(r'images/menu/main_menu_background.png'), 'Victory')
+            DF = EndGameMenu(self.__screen, pygame.image.load(
+                r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/menu/main_menu_background.png'), 'Victory')
             return DF.show_menu()
 
         self.waveCnt += 1
@@ -115,7 +116,8 @@ class GameObject:
         hp = self.__Castle.get_hp
         if hp <= 0:
             pygame.mixer.music.pause()
-            DF = EndGameMenu(self.__screen, pygame.image.load(r'images/menu/defeat_menu_background.jpg'), 'Defeat')
+            DF = EndGameMenu(self.__screen, pygame.image.load(
+                r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/menu/defeat_menu_background.jpg'), 'Defeat')
             return DF.show_menu()
 
         self.__hpBtn.draw(self.__screen, 20, f'Castle HP: {hp}')

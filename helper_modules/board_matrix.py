@@ -94,6 +94,6 @@ class BoardTypes:
             ]
 
 
-board1_img = pygame.image.load(r'images/maps/map1.png')
-board2_img = pygame.image.load(r'images/maps/map2.png')
-board3_img = pygame.image.load(r'images/maps/map3.png')
+board1_img = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/maps/map1.png')
+board2_img = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/maps/map2.png')
+board3_img = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/maps/map3.png')

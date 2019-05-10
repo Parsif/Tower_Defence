@@ -28,7 +28,7 @@ def main():
 
     GmObj.spawn_mob()
     while is_running:
-        clock.tick(25)
+        clock.tick(80)
         GmObj.draw_board()
         GmObj.draw_pause_btn()
         tmp = GmObj.show_cst_hp()

@@ -36,19 +36,20 @@ class Cell:
         self.SIZE = 40
 
         if self._cellType == 0:
-            self._image = pygame.image.load(r'images/wasteland.jpg').convert()
+            self._image = pygame.image.load(
+                r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/wasteland.jpg').convert()
 
         elif self._cellType == 1:
-            self._image = pygame.image.load(r'images/road.jpg').convert()
+            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/road.jpg').convert()
 
         elif self._cellType == 2:
             pass
 
         elif self._cellType == 5000:
-            self._image = pygame.image.load(r'images/castle.jpg').convert()
+            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/castle.jpg').convert()
 
         elif self._cellType == -5000:
-            self._image = pygame.image.load(r'images/portal.jpg').convert()
+            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/portal.jpg').convert()
 
         else:
             raise Exception('Unknown type of cell')

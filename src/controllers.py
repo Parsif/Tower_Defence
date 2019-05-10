@@ -45,7 +45,8 @@ class MapChoice:
     """
 
     def __init__(self, screen):
-        self._bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
+        self._bgImage = pygame.image.load(
+            r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/menu/main_menu_background.png')
         self.__screen = screen
         self.__headerFont = pygame.font.SysFont('impact', 80)
         self.__txtColor = (0, 0, 0)
@@ -149,7 +150,8 @@ class MenuObject:
     """
 
     def __init__(self, screen):
-        self._bgImage = pygame.image.load(r'images/menu/main_menu_background.png')
+        self._bgImage = pygame.image.load(
+            r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/menu/main_menu_background.png')
         self._screen = screen
         self._headerFont = pygame.font.SysFont('impact', 80)
         self.__font = pygame.font.SysFont('impact', 24)

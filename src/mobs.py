@@ -1,6 +1,6 @@
 import pygame
 
-from helper_modules import spider_imgs, orc_imgs, dragon_imgs
+from helper_modules import spider_imgs, dragon_imgs, turtle_imgs
 from helper_modules import tower_img
 from helper_modules.sound import Sound
 
@@ -120,7 +120,7 @@ class Spider(Mob):
         self.image = spider_imgs.spider_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
         self.__hp = 130
-        self._SPEED = 2
+        self._SPEED = 6
         self._speedCnt = self._SPEED
         self.__COST = 10
 
@@ -176,10 +176,10 @@ class Spider(Mob):
         return self.__hp
 
 
-class Orc(Mob):
+class Turtle(Mob):
     def __init__(self, start, path):
         Mob.__init__(self, start, path)
-        self.image = orc_imgs.orc_down[0]
+        self.image = turtle_imgs.turtle_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
         self.__hp = 400
         self._SPEED = 6
@@ -195,19 +195,19 @@ class Orc(Mob):
         dy = self._coord['y'] * 40 - self.rect.y
 
         if dx > 0:
-            self._imageSource = orc_imgs.orc_right
+            self._imageSource = turtle_imgs.turtle_right
 
         elif dx < 0:
-            self._imageSource = orc_imgs.orc_left
+            self._imageSource = turtle_imgs.turtle_left
 
         elif dy > 0:
-            self._imageSource = orc_imgs.orc_down
+            self._imageSource = turtle_imgs.turtle_down
 
         elif dy < 0:
-            self._imageSource = orc_imgs.orc_up
+            self._imageSource = turtle_imgs.turtle_up
 
     def draw_dead(self, screen):
-        self.image = orc_imgs.orc_dead[0]
+        self.image = turtle_imgs.turtle_dead[0]
         screen.blit(self.image, self.rect)
         self._turns_dead += 1
 
