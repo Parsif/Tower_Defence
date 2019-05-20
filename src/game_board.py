@@ -9,82 +9,106 @@ class GameBoard:
     """
        Docstring
     """
+    paths = []
 
     def __init__(self):
-        self.__cells = []
-        self.__start = []
-        self.__end = {'x': 0, 'y': 0}
-        self.__Castle = None
-        self.__towers = []
+        self._cells = []
+        self._start = []
+        self._end = {'x': 0, 'y': 0}
+        self._Castle = None
+        self._towers = []
         self.BM = board_matrix.BoardTypes()
+        if self.BM.choice == 3:
+            self.BM.generate_board()
         self.BOARD_CELLS = self.BM.get_board()
-        self.__parse_board()
+        self._parse_board()
 
     @property
     def get_start(self):
-        return self.__start
+        return self._start
 
     @property
     def get_end(self):
-        return self.__end
+        return self._end
 
     @property
     def get_castle(self):
-        return self.__Castle
+        return self._Castle
 
     @property
     def get_towers(self):
-        return self.__towers
+        return self._towers
 
-    def __parse_board(self):
+    def clean_board(self):
+        for cell in self._cells:
+            cnt = 0
+            for path in self.paths:
+                if cell.coord not in path:
+                    cnt += 1
+            if cnt == len(self.paths):
+                x, y = cell.coord['x'], cell.coord['y']
+                flag = True  # checking portal
+                for st in self._start:
+                    if x == st['x'] and y == st['y']:
+                        flag = False
+                if flag:
+                    self._cells[x * len(self.BOARD_CELLS[0]) + y] = Cell(0, {'x': x, 'y': y})
+
+    def set_towers(self):
+        pass
+
+    def _parse_board(self):
         i = 0
         for row in self.BOARD_CELLS:
             j = 0
             for cell in row:
                 if cell == 5000:
-                    self.__Castle = Castle(cell, {'x': i, 'y': j})
-                    self.__cells.append(self.__Castle)
-                    self.__end['x'] = i
-                    self.__end['y'] = j
+                    self._Castle = Castle(cell, {'x': i, 'y': j})
+                    self._cells.append(self._Castle)
+                    self._end['x'] = i
+                    self._end['y'] = j
 
                 elif cell == 2:
                     tw = Tower(cell, {'x': i, 'y': j})
-                    self.__towers.append(tw)
+                    self._towers.append(tw)
                 else:
                     if cell == -5000:
-                        self.__start.append({'x': i, 'y': j})
+                        self._start.append({'x': i, 'y': j})
                     cl = Cell(cell, {'x': i, 'y': j})
-                    self.__cells.append(cl)
+                    self._cells.append(cl)
                 j += 1
             i += 1
 
     def draw(self, screen, towers):
-        for cell in self.__cells:
+        for cell in self._cells:
             cell.draw(screen)
         for tower in towers:
             if tower.get_build_cnt == 0:
                 tower.draw(screen)
 
-
-    def __mark_path(self, start):
+    def _mark_path(self, start):
         board = deepcopy(self.BOARD_CELLS)
         queue = deque()
         queue.append(start)
         d = 4
         while len(queue) > 0:
             tmp = queue.popleft()
-            res = self.__is_moving_top(tmp, board)
+            res = self._is_moving_top(tmp, board)
             if res[0]:
-                queue.append(res[1])
-            res = self.__is_moving_right(tmp, board)
+                if res[1] not in queue:
+                    queue.append(res[1])
+            res = self._is_moving_right(tmp, board)
             if res[0]:
-                queue.append(res[1])
-            res = self.__is_moving_bottom(tmp, board)
+                if res[1] not in queue:
+                    queue.append(res[1])
+            res = self._is_moving_bottom(tmp, board)
             if res[0]:
-                queue.append(res[1])
-            res = self.__is_moving_left(tmp, board)
+                if res[1] not in queue:
+                    queue.append(res[1])
+            res = self._is_moving_left(tmp, board)
             if res[0]:
-                queue.append(res[1])
+                if res[1] not in queue:
+                    queue.append(res[1])
 
             board[tmp['x']][tmp['y']] = d
             d += 1
@@ -92,9 +116,9 @@ class GameBoard:
         return board
 
     def get_path(self, start):
-        board = self.__mark_path(start)
-        path = [self.__end]
-        neighbours = self.__find_neighbours(self.__end, board)
+        board = self._mark_path(start)
+        path = [self._end]
+        neighbours = self.__find_neighbours(self._end, board)
         neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
         cur = neighbours[0]
 
@@ -105,10 +129,12 @@ class GameBoard:
             cur = neighbours[0]
 
         path.reverse()
+        self.paths.append(path)
+
         return path
 
     @staticmethod
-    def __is_moving_top(coord: dict, board) -> tuple:
+    def _is_moving_top(coord: dict, board) -> tuple:
         if coord['y'] - 1 >= 0 and board[coord['x']][coord['y'] - 1] == 1:
             return (True, {
                 'x': coord['x'],
@@ -118,7 +144,7 @@ class GameBoard:
         return False, None
 
     @staticmethod
-    def __is_moving_right(coord: dict, board) -> tuple:
+    def _is_moving_right(coord: dict, board) -> tuple:
         if coord['x'] + 1 < len(board) and board[coord['x'] + 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] + 1,
@@ -128,8 +154,8 @@ class GameBoard:
         return False, None
 
     @staticmethod
-    def __is_moving_bottom(coord: dict, board) -> tuple:
-        if coord['y'] + 1 < len(board) and board[coord['x']][coord['y'] + 1] == 1:
+    def _is_moving_bottom(coord: dict, board) -> tuple:
+        if coord['y'] + 1 < len(board[0]) and board[coord['x']][coord['y'] + 1] == 1:
             return (True, {
                 'x': coord['x'],
                 'y': coord['y'] + 1
@@ -138,7 +164,7 @@ class GameBoard:
         return False, None
 
     @staticmethod
-    def __is_moving_left(coord: dict, board) -> tuple:
+    def _is_moving_left(coord: dict, board) -> tuple:
         if coord['x'] - 1 >= 0 and board[coord['x'] - 1][coord['y']] == 1:
             return (True, {
                 'x': coord['x'] - 1,
@@ -152,7 +178,7 @@ class GameBoard:
         x, y = coord['x'], coord['y']
         neighbours = []
 
-        if y + 1 < len(board) and board[x][y + 1] > 2:
+        if y + 1 < len(board[0]) and board[x][y + 1] > 2:
             neighbours.append({'x': x, 'y': y + 1})
         if y - 1 >= 0 and board[x][y - 1] > 2:
             neighbours.append({'x': x, 'y': y - 1})

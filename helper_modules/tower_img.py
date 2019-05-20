@@ -22,7 +22,11 @@ hmrStrikes = [
     pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike1.png'),
     pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike2.png'),
     pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike3.png'),
-    pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike4.png')]
+    pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike4.png'),
+    pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike5.png'),
+    pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike6.png'),
+    pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/hammerstrike7.png'),
+]
 
 wood = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/tower/wood.png')
 

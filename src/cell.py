@@ -30,89 +30,89 @@ class Cell:
     """
 
     def __init__(self, cell_type, coord):
-        self._cellType = cell_type
-        self._coord = coord
-        self._image = None
+        self.cellType = cell_type
+        self.coord = coord
+        self.image = None
         self.SIZE = 40
 
-        if self._cellType == 0:
-            self._image = pygame.image.load(
+        if self.cellType == 0:
+            self.image = pygame.image.load(
                 r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/wasteland.jpg').convert()
 
-        elif self._cellType == 1:
-            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/road.jpg').convert()
+        elif self.cellType == 1:
+            self.image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/road.jpg').convert()
 
-        elif self._cellType == 2:
+        elif self.cellType == 2:
             pass
 
-        elif self._cellType == 5000:
-            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/castle.jpg').convert()
+        elif self.cellType == 5000:
+            self.image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/castle.jpg').convert()
 
-        elif self._cellType == -5000:
-            self._image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/portal.jpg').convert()
+        elif self.cellType == -5000:
+            self.image = pygame.image.load(r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/portal.jpg').convert()
 
         else:
             raise Exception('Unknown type of cell')
 
     def draw(self, screen):
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     @property
     def get_coord(self):
-        return self._coord
+        return self.coord
 
 
 class Castle(Cell):
     def __init__(self, cell_type, coord):
         Cell.__init__(self, cell_type, coord)
-        self.__HP = 30
+        self._HP = 10
 
     def set_hp(self, hp):
-        self.__HP = hp
+        self._HP = hp
 
     @property
     def get_hp(self):
-        return self.__HP
+        return self._HP
 
     def take_damage(self, damage):
-        self.__HP -= damage
+        self._HP -= damage
 
 
 class Tower(Cell):
     def __init__(self, cell_type, coord):
         Cell.__init__(self, cell_type, coord)
-        self.__power = 0
+        self._power = 0
         self.range = 2
-        self._color = (255, 100, 100)
-        self._buildCnt = 0
-        self._shotCnt = 0
-        self._shotDx = 0
-        self._shotDy = 0
-        self._SHOT_STEPS = 3  # number of particle positions
-        self._Particle = Particle(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                  self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.color = (255, 100, 100)
+        self.buildCnt = 0
+        self.shotCnt = 0
+        self.shotDx = 0
+        self.shotDy = 0
+        self.SHOT_STEPS = 3  # number of particle positions
+        self.Particle = Particle(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                 self.coord['y'] * self.SIZE + self.SIZE // 3)
 
     def draw(self, screen):
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
 
     def set_color(self, color=(255, 100, 100)):
-        self._color = color
+        self.color = color
 
     def set_build_cnt(self):
-        self._buildCnt = 1
+        self.buildCnt = 1
 
     @property
     def get_build_cnt(self):
-        return self._buildCnt
+        return self.buildCnt
 
     @property
     def get_shot_cnt(self):
-        return self._shotCnt
+        return self.shotCnt
 
     def is_hovered(self, m_pos):
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
         if coord[0] < m_pos[0] < coord[0] + self.SIZE:
             if coord[1] < m_pos[1] < coord[1] + self.SIZE:
                 return True
@@ -122,8 +122,8 @@ class Tower(Cell):
     def _find_mob(self, mobs):
         mobs_in_range = []
         for mob in mobs:
-            rngX = abs(mob.rect.x - self._coord['x'] * self.SIZE)
-            rngY = abs(mob.rect.y - self._coord['y'] * self.SIZE)
+            rngX = abs(mob.rect.x - self.coord['x'] * self.SIZE)
+            rngY = abs(mob.rect.y - self.coord['y'] * self.SIZE)
             if rngX <= 80 and rngY <= 80:
                 mobs_in_range.append({'mob': mob, 'range': rngX + rngY})
 
@@ -134,73 +134,82 @@ class Tower(Cell):
         return None
 
     def build(self, screen):
-        if 1 <= self._buildCnt <= 40:
+        if 1 <= self.buildCnt <= 56:
             hmr_margin_top = self.SIZE / 2
-            coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
+            coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
 
-            if self._buildCnt in range(1, 5):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
+            if self.buildCnt in range(1, 5):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[0],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
                 if Sound.soundMode:
                     Sound.towerConstruct.play()
 
-            elif self._buildCnt in range(6, 10):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(6, 10):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[1],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(11, 15):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(11, 15):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[2],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(16, 20):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(16, 20):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[3],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(21, 25):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
+            elif self.buildCnt in range(21, 25):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[0],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(26, 30):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(26, 30):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[1],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(31, 35):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(31, 35):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[2],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self._buildCnt in range(36, 40):
-                pygame.draw.rect(screen, self._color, [coord[0], coord[1], self.SIZE, self.SIZE])
-
+            elif self.buildCnt in range(36, 40):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[3],
-                            (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE - hmr_margin_top))
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            screen.blit(tower_img.wood, (self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE + 5))
-            self._buildCnt += 1
+            elif self.buildCnt in range(41, 45):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[4],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(46, 50):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[5],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(51, 56):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[6],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            screen.blit(tower_img.wood, (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE + 5))
+            self.buildCnt += 1
         else:
-            self._buildCnt = 0
+            self.buildCnt = 0
 
 
 class BasicTower(Tower):
-    SPEED = 10  # less is faster
+    SPEED = 30  # less is faster
     COST = 25
 
     def __init__(self, tower):
-        Tower.__init__(self, tower._cellType, tower._coord)
-        self._image = tower_img.basicTw1
-        self._DAMAGE = 20
-        self.__fireCnt = self.SPEED
+        Tower.__init__(self, tower.cellType, tower.coord)
+        self.image = tower_img.basicTw1
+        self.DAMAGE = 20
+        self._fireCnt = self.SPEED
 
     @property
     def get_cost(self):
@@ -208,19 +217,19 @@ class BasicTower(Tower):
 
     def draw(self, screen):
         super().draw(screen)
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     def show_shot(self, screen):
-        if 1 <= self._shotCnt <= self._SHOT_STEPS:
-            self._Particle.update(self._shotDx, self._shotDy)
-            self._Particle.draw(screen)
+        if 1 <= self._shotCnt <= self.SHOT_STEPS:
+            self.Particle.update(self._shotDx, self._shotDy)
+            self.Particle.draw(screen)
             self._shotCnt += 1
 
     def fire(self, screen, mobs):
-        self.__fireCnt += 1
+        self._fireCnt += 1
 
-        if self.__fireCnt % self.SPEED != 0:
+        if self._fireCnt % self.SPEED != 0:
             return None
 
         near_mob = self._find_mob(mobs)
@@ -228,31 +237,31 @@ class BasicTower(Tower):
             return None
 
         x, y = near_mob.rect.x, near_mob.rect.y
-        self._shotDx = (x - self._coord['x'] * self.SIZE) // self._SHOT_STEPS
-        self._shotDy = (y - self._coord['y'] * self.SIZE) // self._SHOT_STEPS
+        self._shotDx = (x - self.coord['x'] * self.SIZE) // self.SHOT_STEPS
+        self._shotDy = (y - self.coord['y'] * self.SIZE) // self.SHOT_STEPS
 
         self._shotCnt = 1
-        self._Particle.set_coord(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                 self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.Particle.set_coord(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                self.coord['y'] * self.SIZE + self.SIZE // 3)
 
         if Sound.soundMode:
             Sound.basicTwShot.play()
-        near_mob.take_damage(self._DAMAGE)
-        self._Particle.draw(screen)
+        near_mob.take_damage(self.DAMAGE)
+        self.Particle.draw(screen)
 
 
 class FireTower(Tower):
-    SPEED = 15  # less is faster
+    SPEED = 35  # less is faster
     COST = 50
 
     def __init__(self, tower):
-        Tower.__init__(self, tower._cellType, tower._coord)
-        self._image = tower_img.fireTw1
-        self._DAMAGE = 15
-        self.__fireCnt = self.SPEED
-        self._FIRE_DAMAGE = 20
-        self._FIRE_LAST_FOR = 30
-        self._EFFECT = {'type': 'fire', 'damage': self._FIRE_DAMAGE, 'last': self._FIRE_LAST_FOR}
+        Tower.__init__(self, tower.cellType, tower.coord)
+        self.image = tower_img.fireTw1
+        self.DAMAGE = 15
+        self.fireCnt = self.SPEED
+        self.FIRE_DAMAGE = 20
+        self.FIRE_LAST_FOR = 30
+        self.EFFECT = {'type': 'fire', 'damage': self.FIRE_DAMAGE, 'last': self.FIRE_LAST_FOR}
 
     @property
     def get_cost(self):
@@ -260,19 +269,19 @@ class FireTower(Tower):
 
     def draw(self, screen):
         super().draw(screen)
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     def show_shot(self, screen):
-        if 1 <= self._shotCnt <= self._SHOT_STEPS:
-            self._Particle.update(self._shotDx, self._shotDy)
-            self._Particle.draw(screen)
-            self._shotCnt += 1
+        if 1 <= self.shotCnt <= self.SHOT_STEPS:
+            self.Particle.update(self.shotDx, self.shotDy)
+            self.Particle.draw(screen)
+            self.shotCnt += 1
 
     def fire(self, screen, mobs):
-        self.__fireCnt += 1
+        self.fireCnt += 1
 
-        if self.__fireCnt % self.SPEED != 0:
+        if self.fireCnt % self.SPEED != 0:
             return None
 
         near_mob = self._find_mob(mobs)
@@ -280,52 +289,51 @@ class FireTower(Tower):
             return None
 
         x, y = near_mob.rect.x, near_mob.rect.y
-        self._shotDx = (x - self._coord['x'] * self.SIZE) // self._SHOT_STEPS
-        self._shotDy = (y - self._coord['y'] * self.SIZE) // self._SHOT_STEPS
+        self.shotDx = (x - self.coord['x'] * self.SIZE) // self.SHOT_STEPS
+        self.shotDy = (y - self.coord['y'] * self.SIZE) // self.SHOT_STEPS
 
-        self._shotCnt = 1
-        self._Particle.set_coord(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                 self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.shotCnt = 1
+        self.Particle.set_coord(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                self.coord['y'] * self.SIZE + self.SIZE // 3)
 
         if Sound.soundMode:
             Sound.fireTwShot.play()
-        near_mob.take_damage(self._DAMAGE, self._EFFECT)
-        self._Particle.draw(screen)
+        near_mob.take_damage(self.DAMAGE, self.EFFECT)
+        self.Particle.draw(screen)
 
 
 class IceTower(Tower):
-    SPEED = 15  # less is faster
+    SPEED = 35  # less is faster
     COST = 75
 
     def __init__(self, tower):
-        Tower.__init__(self, tower._cellType, tower._coord)
-        self._image = tower_img.iceTw1
-        self._DAMAGE = 20
-        self.__fireCnt = self.SPEED
-        self._SLOW = 7
-        self._SLOW_LAST_FOR = 25
-        self._EFFECT = {'type': 'ice', 'slow': self._SLOW, 'last': self._SLOW_LAST_FOR}
+        Tower.__init__(self, tower.cellType, tower.coord)
+        self.image = tower_img.iceTw1
+        self.DAMAGE = 20
+        self.fireCnt = self.SPEED
+        self.SLOW = 7
+        self.SLOW_LAST_FOR = 25
+        self.EFFECT = {'type': 'ice', 'slow': self.SLOW, 'last': self.SLOW_LAST_FOR}
 
     @property
     def get_cost(self):
         return self.COST
 
-
     def draw(self, screen):
         super().draw(screen)
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     def show_shot(self, screen):
-        if 1 <= self._shotCnt <= self._SHOT_STEPS:
-            self._Particle.update(self._shotDx, self._shotDy)
-            self._Particle.draw(screen)
-            self._shotCnt += 1
+        if 1 <= self.shotCnt <= self.SHOT_STEPS:
+            self.Particle.update(self.shotDx, self.shotDy)
+            self.Particle.draw(screen)
+            self.shotCnt += 1
 
     def fire(self, screen, mobs):
-        self.__fireCnt += 1
+        self.fireCnt += 1
 
-        if self.__fireCnt % self.SPEED != 0:
+        if self.fireCnt % self.SPEED != 0:
             return None
 
         near_mob = self._find_mob(mobs)
@@ -333,28 +341,28 @@ class IceTower(Tower):
             return None
 
         x, y = near_mob.rect.x, near_mob.rect.y
-        self._shotDx = (x - self._coord['x'] * self.SIZE) // self._SHOT_STEPS
-        self._shotDy = (y - self._coord['y'] * self.SIZE) // self._SHOT_STEPS
-        self._shotCnt = 1
-        self._Particle.set_coord(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                 self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.shotDx = (x - self.coord['x'] * self.SIZE) // self.SHOT_STEPS
+        self.shotDy = (y - self.coord['y'] * self.SIZE) // self.SHOT_STEPS
+        self.shotCnt = 1
+        self.Particle.set_coord(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                self.coord['y'] * self.SIZE + self.SIZE // 3)
 
         if Sound.soundMode:
             Sound.iceTwShot.play()
-        near_mob.take_damage(self._DAMAGE, self._EFFECT)
-        self._Particle.draw(screen)
+        near_mob.take_damage(self.DAMAGE, self.EFFECT)
+        self.Particle.draw(screen)
 
 
 class DarkTower(Tower):
-    SPEED = 35  # less is faster
+    SPEED = 55  # less is faster
     COST = 100
 
     def __init__(self, tower):
-        Tower.__init__(self, tower._cellType, tower._coord)
-        self._image = tower_img.darkTw1
-        self._DAMAGE = 100
-        self.__fireCnt = self.SPEED
-        self._FIRE_DAMAGE = 5
+        Tower.__init__(self, tower.cellType, tower.coord)
+        self.image = tower_img.darkTw1
+        self.DAMAGE = 100
+        self.fireCnt = self.SPEED
+        self.FIRE_DAMAGE = 5
 
     # self.__EFFECT = {'type': 'fire', 'damage': self.__FIRE_DAMAGE}
 
@@ -364,19 +372,19 @@ class DarkTower(Tower):
 
     def draw(self, screen):
         super().draw(screen)
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     def show_shot(self, screen):
-        if 1 <= self._shotCnt <= self._SHOT_STEPS:
-            self._Particle.update(self._shotDx, self._shotDy)
-            self._Particle.draw(screen)
-            self._shotCnt += 1
+        if 1 <= self.shotCnt <= self.SHOT_STEPS:
+            self.Particle.update(self.shotDx, self.shotDy)
+            self.Particle.draw(screen)
+            self.shotCnt += 1
 
     def fire(self, screen, mobs):
-        self.__fireCnt += 1
+        self.fireCnt += 1
 
-        if self.__fireCnt % self.SPEED != 0:
+        if self.fireCnt % self.SPEED != 0:
             return None
 
         near_mob = self._find_mob(mobs)
@@ -384,28 +392,28 @@ class DarkTower(Tower):
             return None
 
         x, y = near_mob.rect.x, near_mob.rect.y
-        self._shotDx = (x - self._coord['x'] * self.SIZE) // self._SHOT_STEPS
-        self._shotDy = (y - self._coord['y'] * self.SIZE) // self._SHOT_STEPS
+        self.shotDx = (x - self.coord['x'] * self.SIZE) // self.SHOT_STEPS
+        self.shotDy = (y - self.coord['y'] * self.SIZE) // self.SHOT_STEPS
 
-        self._shotCnt = 1
-        self._Particle.set_coord(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                 self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.shotCnt = 1
+        self.Particle.set_coord(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                self.coord['y'] * self.SIZE + self.SIZE // 3)
         if Sound.soundMode:
             Sound.darkTwShot.play()
-        near_mob.take_damage(self._DAMAGE)
+        near_mob.take_damage(self.DAMAGE)
 
 
 class PoisonTower(Tower):
-    SPEED = 10  # less is faster
+    SPEED = 30  # less is faster
     COST = 125
 
     def __init__(self, tower):
-        Tower.__init__(self, tower._cellType, tower._coord)
-        self._image = tower_img.poisonTw1
-        self._DAMAGE = 30
-        self.__fireCnt = self.SPEED
-        self._POISON_DAMAGE = 7
-        self.__EFFECT = {'type': 'poison', 'poison': self._POISON_DAMAGE}
+        Tower.__init__(self, tower.cellType, tower.coord)
+        self.image = tower_img.poisonTw1
+        self.DAMAGE = 30
+        self.fireCnt = self.SPEED
+        self.POISON_DAMAGE = 7
+        self._EFFECT = {'type': 'poison', 'poison': self.POISON_DAMAGE}
 
     @property
     def get_cost(self):
@@ -413,19 +421,19 @@ class PoisonTower(Tower):
 
     def draw(self, screen):
         super().draw(screen)
-        coord = self._coord['x'] * self.SIZE, self._coord['y'] * self.SIZE
-        screen.blit(self._image, coord)
+        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        screen.blit(self.image, coord)
 
     def show_shot(self, screen):
-        if 1 <= self._shotCnt <= self._SHOT_STEPS:
-            self._Particle.update(self._shotDx, self._shotDy)
-            self._Particle.draw(screen)
-            self._shotCnt += 1
+        if 1 <= self.shotCnt <= self.SHOT_STEPS:
+            self.Particle.update(self.shotDx, self.shotDy)
+            self.Particle.draw(screen)
+            self.shotCnt += 1
 
     def fire(self, screen, mobs):
-        self.__fireCnt += 1
+        self.fireCnt += 1
 
-        if self.__fireCnt % self.SPEED != 0:
+        if self.fireCnt % self.SPEED != 0:
             return None
 
         near_mob = self._find_mob(mobs)
@@ -433,70 +441,70 @@ class PoisonTower(Tower):
             return None
 
         x, y = near_mob.rect.x, near_mob.rect.y
-        self._shotDx = (x - self._coord['x'] * self.SIZE) // self._SHOT_STEPS
-        self._shotDy = (y - self._coord['y'] * self.SIZE) // self._SHOT_STEPS
+        self.shotDx = (x - self.coord['x'] * self.SIZE) // self.SHOT_STEPS
+        self.shotDy = (y - self.coord['y'] * self.SIZE) // self.SHOT_STEPS
 
-        self._shotCnt = 1
-        self._Particle.set_coord(self._coord['x'] * self.SIZE + self.SIZE // 2,
-                                 self._coord['y'] * self.SIZE + self.SIZE // 3)
+        self.shotCnt = 1
+        self.Particle.set_coord(self.coord['x'] * self.SIZE + self.SIZE // 2,
+                                self.coord['y'] * self.SIZE + self.SIZE // 3)
 
         if Sound.soundMode:
             Sound.poisonTwShot.play()
-        near_mob.take_damage(self._DAMAGE, self.__EFFECT)
-        self._Particle.draw(screen)
+        near_mob.take_damage(self.DAMAGE, self._EFFECT)
+        self.Particle.draw(screen)
 
 
 class BasicTower2(BasicTower):
-    SPEED = 10  # less is faster
+    SPEED = 25  # less is faster
     COST = BasicTower.COST * 2
 
     def __init__(self, tower):
         BasicTower.__init__(self, tower)
-        self._image = tower_img.basicTw2
-        self._DAMAGE = 40
+        self.image = tower_img.basicTw2
+        self.DAMAGE = 40
 
 
 class FireTower2(FireTower):
-    SPEED = 15  # less is faster
+    SPEED = 30  # less is faster
     COST = FireTower.COST * 2
 
     def __init__(self, tower):
         FireTower.__init__(self, tower)
-        self._image = tower_img.fireTw2
-        self._DAMAGE = 20
-        self._FIRE_DAMAGE = 30
+        self.image = tower_img.fireTw2
+        self.DAMAGE = 20
+        self.FIRE_DAMAGE = 30
 
 
 class IceTower2(IceTower):
-    SPEED = 13  # less is faster
+    SPEED = 35  # less is faster
     COST = IceTower.COST * 2
 
     def __init__(self, tower):
         IceTower.__init__(self, tower)
-        self._image = tower_img.iceTw2
-        self._DAMAGE = 25
-        self._SLOW = 15
+        self.image = tower_img.iceTw2
+        self.DAMAGE = 25
+        self.SLOW = 15
 
 
 class DarkTower2(DarkTower):
-    SPEED = 35
+    SPEED = 55
     COST = DarkTower.COST * 2
 
     def __init__(self, tower):
         DarkTower.__init__(self, tower)
-        self._image = tower_img.darkTw2
-        self._DAMAGE = 200
+        self.image = tower_img.darkTw2
+        self.DAMAGE = 200
 
 
 class PoisonTower2(PoisonTower):
-    SPEED = 10  # less is faster
+    SPEED = 30  # less is faster
     COST = PoisonTower.COST * 2
 
     def __init__(self, tower):
         PoisonTower.__init__(self, tower)
-        self._image = tower_img.poisonTw2
-        self._DAMAGE = 60
-        self._POISON_DAMAGE = 15
+        self.image = tower_img.poisonTw2
+        self.DAMAGE = 60
+        self.POISON_DAMAGE = 15
 
 
 tw_lvl1 = (BasicTower, FireTower, IceTower, DarkTower, PoisonTower)

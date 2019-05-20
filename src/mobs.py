@@ -182,7 +182,7 @@ class Turtle(Mob):
         self.image = turtle_imgs.turtle_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
         self.__hp = 400
-        self._SPEED = 6
+        self._SPEED = 8
         self._speedCnt = self._SPEED
         self.__COST = 50
 
@@ -214,7 +214,7 @@ class Turtle(Mob):
     def take_damage(self, damage, effect=None):
         self.__hp -= damage
         if self.__hp <= 0 and Sound.soundMode:
-            Sound.orc_death.play()
+            Sound.turtle_death.play()
 
         elif effect is not None:
             if effect['type'] == 'fire':
@@ -244,7 +244,7 @@ class Dragon(Mob):
         self.image = dragon_imgs.dragon_down[0]
         self.rect = self.image.get_rect(topleft=(self._start['x'] * 40, self._start['y'] * 40))
         self.__hp = 2000
-        self._SPEED = 7
+        self._SPEED = 10
         self._speedCnt = self._SPEED
         self.__COST = 500
 

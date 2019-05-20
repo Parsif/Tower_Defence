@@ -1,6 +1,10 @@
 class Player:
     def __init__(self):
         self.__coins = 100
+        self.isLoggedIn = False
+        self.userDoc = None
+        self.email = None
+        self.db_collection = None
 
     @property
     def get_coins(self):

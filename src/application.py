@@ -1,19 +1,68 @@
+from tkinter import *
+
 import pygame
+import pymongo
 
 from helper_modules.sound import Sound
 from src.controllers import MenuObject
 from src.game_object import GameObject
+from src.player import Player
+
+
+def valid_info(email, password, root, player):
+    client = pymongo.MongoClient(
+        "mongodb+srv://Vlad:mandarin2001@cluster0-4fh12.mongodb.net/TD?retryWrites=true")
+    db = client['TD']
+    users = db['users']
+    user = users.find_one({'email': email.get()})
+    if user is None:
+        return None
+    if user['email'] == email.get() and user['password'] == password.get():
+        player.isLoggedIn = True
+        player.db_collection = users
+        player.email = user['email']
+        player.userDoc = user
+        root.destroy()
+
+
+def login(player):
+    root = Tk()
+    root.title(u'Login')
+    root.geometry('200x200')
+    root.resizable(False, False)
+    lbl1 = Label(root, text='Email', font='arial 20')
+    email = StringVar()
+    email_field = Entry(textvariable=email)
+
+    lbl2 = Label(root, text='Password', font='arial 20')
+    password = StringVar()
+    password_field = Entry(show='*', textvariable=password)
+    submit = Button(root, bg="red", text=u"Login", command=lambda: valid_info(email, password, root, player),
+                    font='arial 17')
+
+    lbl1.place(x=0, y=0)
+    email_field.place(x=0, y=40)
+    lbl2.place(x=0, y=80)
+    password_field.place(x=0, y=120)
+    submit.place(x=50, y=160)
+
+    root.mainloop()
 
 
 def main():
+    pl = Player()
+    # login(pl)
+    # if not pl.isLoggedIn:
+    #     return None
+
     pygame.init()
     screen = pygame.display.set_mode((1000, 800))
     GameObject.set_up_game()
-    Menu = MenuObject(screen)
+    Menu = MenuObject(screen, pl)
     Menu.show_menu()
     if Menu.get_is_exit:
         return None
-    GmObj = GameObject(screen)
+    GmObj = GameObject(screen, pl)
 
     GmObj.is_exit = Menu.get_is_exit
     if GmObj.is_exit:
@@ -22,7 +71,7 @@ def main():
     clock = pygame.time.Clock()
     is_running = True
     spawnCnt = 0
-    SPAWN_RATE = 20
+    SPAWN_RATE = 30
     if Sound.soundMode:
         GmObj.play_music()
 
@@ -41,7 +90,7 @@ def main():
         elif tmp:
             GmObj.restart()
             Menu.show_menu()
-            GmObj = GameObject(screen)
+            GmObj = GameObject(screen, pl)
             if Menu.get_is_exit:
                 break
             if Sound.soundMode:
@@ -66,8 +115,10 @@ def main():
 
             elif tmp:
                 GmObj.restart()
+
+                Menu = MenuObject(screen, pl)
                 Menu.show_menu()
-                GmObj = GameObject(screen)
+                GmObj = GameObject(screen, pl)
                 if Menu.get_is_exit:
                     break
                 if Sound.soundMode:
