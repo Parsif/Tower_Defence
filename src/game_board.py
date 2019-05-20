@@ -22,6 +22,7 @@ class GameBoard:
             self.BM.generate_board()
         self.BOARD_CELLS = self.BM.get_board()
         self._parse_board()
+        self._marked_board = []
 
     @property
     def get_start(self):
@@ -53,9 +54,28 @@ class GameBoard:
                         flag = False
                 if flag:
                     self._cells[x * len(self.BOARD_CELLS[0]) + y] = Cell(0, {'x': x, 'y': y})
+                    self._marked_board[x][y] = 0
 
     def set_towers(self):
-        pass
+        reachable = [1, -5000, 5000]
+        for i in range(len(self._marked_board)):
+            for j in range(len(self._marked_board[0])):
+                if i - 1 >= 0 and self._marked_board[i - 1][j] == 0 and self._marked_board[i][j] not in reachable:
+                    if i + 1 < len(self._marked_board) and self._marked_board[i + 1][j] == 0:
+                        if j + 1 < len(self._marked_board[0]) and self._marked_board[i][j + 1] == 0:
+                            if j - 1 >= 0 and self._marked_board[i][j - 1] == 0:
+                                if i - 2 >= 0 and self._marked_board[i - 2][j] > 10:
+                                    tw = Tower(2, {'x': i, 'y': j})
+                                    self._towers.append(tw)
+                                elif i + 2 < len(self._marked_board) and self._marked_board[i + 2][j] > 10:
+                                    tw = Tower(2, {'x': i, 'y': j})
+                                    self._towers.append(tw)
+                                elif j + 2 < len(self._marked_board[0]) and self._marked_board[i][j + 2] > 10:
+                                    tw = Tower(2, {'x': i, 'y': j})
+                                    self._towers.append(tw)
+                                elif j - 2 >= 0 and self._marked_board[i][j - 2] > 10:
+                                    tw = Tower(2, {'x': i, 'y': j})
+                                    self._towers.append(tw)
 
     def _parse_board(self):
         i = 0
@@ -113,6 +133,7 @@ class GameBoard:
             board[tmp['x']][tmp['y']] = d
             d += 1
 
+        self._marked_board = board
         return board
 
     def get_path(self, start):

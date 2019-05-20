@@ -24,14 +24,14 @@ class GameObject:
         self._screen = screen
         self._GB = GameBoard()
         self._Castle = self._GB.get_castle
-        self.__towers = deepcopy(self._GB.get_towers)  # just placeholders for tower
         self._start = self._GB.get_start
         self._path = []
         for st in self._start:
             self._path.append(self._GB.get_path(st))
         if self._GB.BM.is_generated:
             self._GB.clean_board()
-
+            self._GB.set_towers()
+        self.__towers = deepcopy(self._GB.get_towers)  # just placeholders for tower
         self.mobs = []
 
         self._hpBtn = Button(125, 50, 865, 10)
@@ -42,7 +42,6 @@ class GameObject:
         self._dead_mobs = []
         self.is_music_played = False
         self.waveCnt = 0
-
 
     @staticmethod
     def set_up_game():

@@ -51,9 +51,9 @@ def login(player):
 
 def main():
     pl = Player()
-    # login(pl)
-    # if not pl.isLoggedIn:
-    #     return None
+    login(pl)
+    if not pl.isLoggedIn:
+        return None
 
     pygame.init()
     screen = pygame.display.set_mode((1000, 800))
@@ -76,8 +76,9 @@ def main():
         GmObj.play_music()
 
     GmObj.spawn_mob()
+    FPS = 80
     while is_running:
-        clock.tick(80)
+        clock.tick(FPS)
         GmObj.draw_board()
         GmObj.draw_pause_btn()
         tmp = GmObj.show_cst_hp()

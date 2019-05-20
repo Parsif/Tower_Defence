@@ -138,62 +138,53 @@ class Tower(Cell):
             hmr_margin_top = self.SIZE / 2
             coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
 
-            if self.buildCnt in range(1, 5):
+            if self.buildCnt in range(1, 10):
                 pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[0],
                             (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
                 if Sound.soundMode:
                     Sound.towerConstruct.play()
 
-            elif self.buildCnt in range(6, 10):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[1],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(11, 15):
+            elif self.buildCnt in range(10, 20):
                 pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[2],
                             (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self.buildCnt in range(16, 20):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[3],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(21, 25):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[0],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(26, 30):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[1],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(31, 35):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[2],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(36, 40):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[3],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(41, 45):
+            elif self.buildCnt in range(20, 30):
                 pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[4],
                             (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
 
-            elif self.buildCnt in range(46, 50):
-                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
-                screen.blit(tower_img.hmrStrikes[5],
-                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
-
-            elif self.buildCnt in range(51, 56):
+            elif self.buildCnt in range(30, 40):
                 pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
                 screen.blit(tower_img.hmrStrikes[6],
                             (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(40, 50):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[0],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(50, 60):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[2],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(60, 70):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[4],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+            elif self.buildCnt in range(70, 80):
+                pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+                screen.blit(tower_img.hmrStrikes[6],
+                            (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE - hmr_margin_top))
+
+
+
+
+
+
 
             screen.blit(tower_img.wood, (self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE + 5))
             self.buildCnt += 1

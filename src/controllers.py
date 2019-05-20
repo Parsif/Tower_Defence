@@ -1,7 +1,7 @@
 import pygame
 
 import helper_modules.game_dsp as GD
-from helper_modules.board_matrix import board1_img, board2_img, board3_img, BoardTypes
+from helper_modules.board_matrix import board1_img, board2_img, BoardTypes
 from helper_modules.sound import Sound
 
 
@@ -49,6 +49,7 @@ class MapChoice:
             r'C:/Users/Влад/PycharmProjects/Tower_Defence/images/menu/main_menu_background.png')
         self._screen = screen
         self._headerFont = pygame.font.SysFont('impact', 80)
+        self._txtFont = pygame.font.SysFont('impact', 40)
         self._txtColor = (0, 0, 0)
         self.is_exit = False
         self._playBtn = Button(200, 75, 750, 650)
@@ -77,7 +78,12 @@ class MapChoice:
 
             self._screen.blit(board1_img, (100, 250))
             self._screen.blit(board2_img, (400, 250))
-            self._screen.blit(board3_img, (700, 250))
+            # self._screen.blit(board3_img, (730, 280))
+            mapTxt1 = self._txtFont.render('Random', 1, self._txtColor)
+            self._screen.blit(mapTxt1, (735, 300))
+
+            mapTxt2 = self._txtFont.render('Generated', 1, self._txtColor)
+            self._screen.blit(mapTxt2, (720, 350))
 
             dsp = self._headerFont.render('Choose Map', 1, self._txtColor)
             self._screen.blit(dsp, (self._screen.get_width() / 3, 100))
