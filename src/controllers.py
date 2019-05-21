@@ -166,8 +166,10 @@ class MapEditor:
 
                     if self._saveBtn.is_hovered(m_pos):
                         board = self.parse_board()
-                        self._Player.db_collection.update_one({'email': self._Player.email},
-                                                              {'$push': {'boards': board}})
+                        bdCnt = len(self._Player.userDoc['boards'])
+                        if bdCnt <= 3:
+                            self._Player.db_collection.update_one({'email': self._Player.email},
+                                                                  {'$push': {'boards': board}})
 
                         return self._cells
 
