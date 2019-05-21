@@ -28,23 +28,23 @@ def valid_info(email, password, root, player):
 def login(player):
     root = Tk()
     root.title(u'Login')
-    root.geometry('200x200')
+    root.geometry('400x200')
     root.resizable(False, False)
-    lbl1 = Label(root, text='Email', font='arial 20')
+    lbl1 = Label(root, text='Email', font='arial 18')
     email = StringVar()
-    email_field = Entry(textvariable=email)
+    email_field = Entry(textvariable=email, width=47)
 
-    lbl2 = Label(root, text='Password', font='arial 20')
+    lbl2 = Label(root, text='Password', font='arial 18')
     password = StringVar()
-    password_field = Entry(show='*', textvariable=password)
-    submit = Button(root, bg="red", text=u"Login", command=lambda: valid_info(email, password, root, player),
+    password_field = Entry(show='*', textvariable=password, width=40)
+    submit = Button(root, bg="blue", text=u"Login", command=lambda: valid_info(email, password, root, player),
                     font='arial 17')
 
-    lbl1.place(x=0, y=0)
-    email_field.place(x=0, y=40)
-    lbl2.place(x=0, y=80)
-    password_field.place(x=0, y=120)
-    submit.place(x=50, y=160)
+    lbl1.place(x=0, y=30)
+    email_field.place(x=100, y=40)
+    lbl2.place(x=0, y=110)
+    password_field.place(x=140, y=120)
+    submit.place(x=160, y=160)
 
     root.mainloop()
 

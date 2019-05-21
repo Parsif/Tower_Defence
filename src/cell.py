@@ -29,11 +29,14 @@ class Cell:
         Docstring
     """
 
-    def __init__(self, cell_type, coord):
+    def __init__(self, cell_type, coord, startX=0, startY=0):
         self.cellType = cell_type
-        self.coord = coord
+        self.coord = {'x': coord['x'], 'y': coord['y']}
         self.image = None
         self.SIZE = 40
+        self.startX = startX
+        self.startY = startY
+        self.color = (0, 0, 0)
 
         if self.cellType == 0:
             self.image = pygame.image.load(
@@ -55,12 +58,35 @@ class Cell:
             raise Exception('Unknown type of cell')
 
     def draw(self, screen):
-        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        coord = self.coord['x'] * self.SIZE + self.startX, self.coord['y'] * self.SIZE + self.startY
         screen.blit(self.image, coord)
+
+    def is_hovered(self, m_pos):
+        coord = self.coord['x'] * self.SIZE + self.startX, self.coord['y'] * self.SIZE + self.startY
+        if coord[0] < m_pos[0] < coord[0] + self.SIZE:
+            if coord[1] < m_pos[1] < coord[1] + self.SIZE:
+                return True
+
+        return False
+
+    def set_color(self, color=(0, 100, 200)):
+        self.color = color
 
     @property
     def get_coord(self):
         return self.coord
+
+
+class EmptyCell(Cell):
+    def __init__(self, cell_type, coord, startX=0, startY=0):
+        Cell.__init__(self, cell_type, coord, startX, startY)
+        self.color = (0, 100, 200)
+
+    def draw(self, screen):
+        coord = self.coord['x'] * self.SIZE + self.startX, self.coord['y'] * self.SIZE + self.startY
+        pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
+
+
 
 
 class Castle(Cell):
@@ -94,7 +120,7 @@ class Tower(Cell):
                                  self.coord['y'] * self.SIZE + self.SIZE // 3)
 
     def draw(self, screen):
-        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        coord = self.coord['x'] * self.SIZE + self.startX, self.coord['y'] * self.SIZE + self.startY
         pygame.draw.rect(screen, self.color, [coord[0], coord[1], self.SIZE, self.SIZE])
 
     def set_color(self, color=(255, 100, 100)):
@@ -112,7 +138,7 @@ class Tower(Cell):
         return self.shotCnt
 
     def is_hovered(self, m_pos):
-        coord = self.coord['x'] * self.SIZE, self.coord['y'] * self.SIZE
+        coord = self.coord['x'] * self.SIZE + self.startX, self.coord['y'] * self.SIZE + self.startY
         if coord[0] < m_pos[0] < coord[0] + self.SIZE:
             if coord[1] < m_pos[1] < coord[1] + self.SIZE:
                 return True

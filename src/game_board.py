@@ -1,5 +1,6 @@
 from collections import deque
 from copy import deepcopy
+from random import randint
 
 from helper_modules import board_matrix
 from src.cell import Cell, Tower, Castle
@@ -18,11 +19,10 @@ class GameBoard:
         self._Castle = None
         self._towers = []
         self.BM = board_matrix.BoardTypes()
-        if self.BM.choice == 3:
-            self.BM.generate_board()
         self.BOARD_CELLS = self.BM.get_board()
         self._parse_board()
         self._marked_board = []
+
 
     @property
     def get_start(self):
@@ -64,16 +64,19 @@ class GameBoard:
                     if i + 1 < len(self._marked_board) and self._marked_board[i + 1][j] == 0:
                         if j + 1 < len(self._marked_board[0]) and self._marked_board[i][j + 1] == 0:
                             if j - 1 >= 0 and self._marked_board[i][j - 1] == 0:
-                                if i - 2 >= 0 and self._marked_board[i - 2][j] > 10:
+                                ran_val = randint(0, 1)
+                                if i - 2 >= 0 and self._marked_board[i - 2][j] > 10 and ran_val == 1:
                                     tw = Tower(2, {'x': i, 'y': j})
                                     self._towers.append(tw)
-                                elif i + 2 < len(self._marked_board) and self._marked_board[i + 2][j] > 10:
+                                elif i + 2 < len(self._marked_board) and self._marked_board[i + 2][
+                                    j] > 10 and ran_val == 1:
                                     tw = Tower(2, {'x': i, 'y': j})
                                     self._towers.append(tw)
-                                elif j + 2 < len(self._marked_board[0]) and self._marked_board[i][j + 2] > 10:
+                                elif j + 2 < len(self._marked_board[0]) and self._marked_board[i][
+                                    j + 2] > 10 and ran_val == 1:
                                     tw = Tower(2, {'x': i, 'y': j})
                                     self._towers.append(tw)
-                                elif j - 2 >= 0 and self._marked_board[i][j - 2] > 10:
+                                elif j - 2 >= 0 and self._marked_board[i][j - 2] > 10 and ran_val == 1:
                                     tw = Tower(2, {'x': i, 'y': j})
                                     self._towers.append(tw)
 

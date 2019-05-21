@@ -28,9 +28,11 @@ class GameObject:
         self._path = []
         for st in self._start:
             self._path.append(self._GB.get_path(st))
+
         if self._GB.BM.is_generated:
             self._GB.clean_board()
             self._GB.set_towers()
+
         self.__towers = deepcopy(self._GB.get_towers)  # just placeholders for tower
         self.mobs = []
 
