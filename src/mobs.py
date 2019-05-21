@@ -40,6 +40,8 @@ class Mob(pygame.sprite.Sprite):
         return self._turns_dead
 
     def __take_a_step(self):
+        if self._path is None:
+            return None
         self.__animCnt += 1
         if self.__animCnt % 4 == 0:
             self.__pathCnt += 1

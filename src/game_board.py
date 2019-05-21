@@ -144,12 +144,16 @@ class GameBoard:
         path = [self._end]
         neighbours = self.__find_neighbours(self._end, board)
         neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
+        if len(neighbours) == 0:
+            return None
         cur = neighbours[0]
 
         while cur['x'] != start['x'] or cur['y'] != start['y']:
             path.append(cur)
             neighbours = self.__find_neighbours(cur, board)
             neighbours.sort(key=lambda nb: board[nb['x']][nb['y']])
+            if len(neighbours) == 0:
+                return None
             cur = neighbours[0]
 
         path.reverse()
